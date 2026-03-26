@@ -1,6 +1,7 @@
 package com.example.fastmart;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.animation.Animation;
@@ -17,6 +18,7 @@ public class SplashScreen extends AppCompatActivity {
 
     ImageView truck;
     Animation moveTruck;
+    SharedPreferences sPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +45,15 @@ public class SplashScreen extends AppCompatActivity {
 
     private void init(){
         truck = findViewById(R.id.delivery_truck);
+        sPref = getSharedPreferences("onboarding",MODE_PRIVATE);
     }
     private Intent CreateIntent(){
-        return new Intent(this, HomePage.class);
+        if(sPref.getBoolean("firstTime",true)) {
+            return new Intent(this, OnboardingActivity.class);
+        }
+        else{
+            return new Intent(this,LoginActivity.class);
+        }
     }
     private void SetAnimations(){
         moveTruck = AnimationUtils.loadAnimation(this,R.anim.move_truck);
