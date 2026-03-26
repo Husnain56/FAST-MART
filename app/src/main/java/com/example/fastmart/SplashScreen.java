@@ -52,7 +52,7 @@ public class SplashScreen extends AppCompatActivity {
             return new Intent(this, OnboardingActivity.class);
         }
         else{
-            return new Intent(this,LoginActivity.class);
+            return new Intent(this, AuthenticationActivity.class);
         }
     }
     private void SetAnimations(){

@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FastMart">
         <activity
-            android:name=".LoginActivity"
+            android:name=".AuthenticationActivity"
             android:exported="false" />
         <activity
             android:name=".OnboardingActivity"

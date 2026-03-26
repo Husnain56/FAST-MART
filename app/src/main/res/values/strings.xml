@@ -14,5 +14,7 @@
     <string name="btn_buy">Buy Now</string>
     <string name="mic_desc">Professional-grade broadcast dynamic microphone designed specifically for podcasting, streaming, and voice recording. Features a rich, balanced sound with internal pop filter and shock mounting. Built with durability in mind, the PodMic delivers exceptional clarity for spoken word content. Perfect for podcasters, streamers, and content creators who demand studio-quality audio. XLR connectivity ensures compatibility with professional audio interfaces and mixers.</string>
     <string name="headphone_desc">Experience premium audio quality with Sony flagship wireless headphones. Industry-leading noise cancellation technology blocks out ambient sound for immersive listening. Features include adaptive sound control, exceptional 30-hour battery life, and touch sensor controls for easy playback management. Premium padding ensures all-day comfort, while high-resolution audio support delivers crystal-clear sound. Perfect for commuters, travelers.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

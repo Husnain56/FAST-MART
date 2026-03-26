@@ -3,7 +3,6 @@ package com.example.fastmart;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.SharedMemory;
 import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
@@ -49,7 +48,7 @@ public class OnboardingActivity extends AppCompatActivity {
     public void moveToLogin(){
         editor.putBoolean("firstTime",false);
         editor.apply();
-        Intent intent = new Intent(this, LoginActivity.class);
+        Intent intent = new Intent(this, AuthenticationActivity.class);
         startActivity(intent);
         finish();
     }
