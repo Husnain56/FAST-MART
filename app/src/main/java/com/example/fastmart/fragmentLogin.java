@@ -1,6 +1,8 @@
 package com.example.fastmart;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -19,6 +21,8 @@ public class fragmentLogin extends Fragment {
     TextInputEditText etPassword;
     Button btnLogin;
 
+    SharedPreferences sPref;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -33,6 +37,8 @@ public class fragmentLogin extends Fragment {
         etEmail     = view.findViewById(R.id.etEmail);
         etPassword  = view.findViewById(R.id.etPassword);
         btnLogin    = view.findViewById(R.id.btnLogin);
+
+        sPref = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
     }
     public void setListeners(){
         btnLogin.setOnClickListener(v -> {
@@ -51,9 +57,25 @@ public class fragmentLogin extends Fragment {
                 return;
             }
 
+            String savedEmail    = sPref.getString("email", "");
+            String savedPassword = sPref.getString("password", "");
+
+            if (!email.equals(savedEmail)) {
+                etEmail.setError("Email not found");
+                return;
+            }
+            if (!password.equals(savedPassword)) {
+                Toast.makeText(getActivity(), "Incorrect Password", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            SharedPreferences.Editor editor = sPref.edit();
+            editor.putBoolean("loggedIn", true);
+            editor.apply();
+
             Intent intent = new Intent(getActivity(), HomePage.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-            requireActivity().finish();
         });
     }
 }

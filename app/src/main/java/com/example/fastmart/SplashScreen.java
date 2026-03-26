@@ -18,7 +18,8 @@ public class SplashScreen extends AppCompatActivity {
 
     ImageView truck;
     Animation moveTruck;
-    SharedPreferences sPref;
+    SharedPreferences onboardingPref;
+    SharedPreferences userPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +38,7 @@ public class SplashScreen extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(CreateIntent());
+                startActivity(createIntent());
                 finish();
             }
         },4000);
@@ -45,15 +46,17 @@ public class SplashScreen extends AppCompatActivity {
 
     private void init(){
         truck = findViewById(R.id.delivery_truck);
-        sPref = getSharedPreferences("onboarding",MODE_PRIVATE);
+        onboardingPref = getSharedPreferences("onboarding",MODE_PRIVATE);
+        userPref = getSharedPreferences("user_prefs", MODE_PRIVATE);
     }
-    private Intent CreateIntent(){
-        if(sPref.getBoolean("firstTime",true)) {
+    private Intent createIntent() {
+        if (onboardingPref.getBoolean("firstTime", true)) {
             return new Intent(this, OnboardingActivity.class);
         }
-        else{
-            return new Intent(this, AuthenticationActivity.class);
+        if (userPref.getBoolean("loggedIn", false)) {
+            return new Intent(this, HomePage.class);
         }
+        return new Intent(this, AuthenticationActivity.class);
     }
     private void SetAnimations(){
         moveTruck = AnimationUtils.loadAnimation(this,R.anim.move_truck);

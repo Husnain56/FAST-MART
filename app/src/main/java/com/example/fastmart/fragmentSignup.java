@@ -1,6 +1,8 @@
 package com.example.fastmart;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,12 +16,16 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.Objects;
+
 public class fragmentSignup extends Fragment {
 
     TextInputEditText etEmail;
     TextInputEditText etPassword;
     TextInputEditText etVerifyPassword;
     Button btnSignUp;
+    SharedPreferences sPref;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,6 +42,8 @@ public class fragmentSignup extends Fragment {
         etPassword = view.findViewById(R.id.etPassword);
         etVerifyPassword = view.findViewById(R.id.etVerifyPassword);
         btnSignUp = view.findViewById(R.id.btnSignUp);
+
+        sPref = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
     }
     public void setListeners() {
         btnSignUp.setOnClickListener(v -> {
@@ -63,9 +71,13 @@ public class fragmentSignup extends Fragment {
                 return;
             }
 
-            Intent intent = new Intent(getActivity(), MainActivity.class);
-            startActivity(intent);
-            requireActivity().finish();
+            SharedPreferences.Editor editor = sPref.edit();
+            editor.putString("email", email);
+            editor.putString("password", password);
+            editor.apply();
+
+
+            ((AuthenticationActivity) requireActivity()).switchToLogin();
         });
     }
 }
