@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="48dp">
+
+    <!-- Search Term -->
+    <TextView
+        android:id="@+id/tvSearchTerm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jeans"
+        android:textSize="15sp"
+        android:textColor="#1A1A1A"
+        android:fontFamily="sans-serif"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true" />
+
+    <!-- Remove (X) Icon -->
+    <ImageView
+        android:id="@+id/ivRemove"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:src="@drawable/ic_remove"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:contentDescription="Remove"
+        app:tint="@color/black" />
+
+    <!-- Divider line at bottom -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F0F0F0"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>
