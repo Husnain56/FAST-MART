@@ -54,7 +54,7 @@ public class SplashScreen extends AppCompatActivity {
             return new Intent(this, OnboardingActivity.class);
         }
         if (userPref.getBoolean("loggedIn", false)) {
-            return new Intent(this, HomePage.class);
+            return new Intent(this, MainViewPager.class);
         }
         return new Intent(this, AuthenticationActivity.class);
     }

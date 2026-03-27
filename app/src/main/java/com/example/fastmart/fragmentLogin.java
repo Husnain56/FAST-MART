@@ -73,7 +73,7 @@ public class fragmentLogin extends Fragment {
             editor.putBoolean("loggedIn", true);
             editor.apply();
 
-            Intent intent = new Intent(getActivity(), HomePage.class);
+            Intent intent = new Intent(getActivity(), MainViewPager.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         });
