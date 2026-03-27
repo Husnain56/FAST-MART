@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="40dp"
-        android:text="@string/welcome_msg"
+        android:text="Hello SAAD"
         android:paddingLeft="20dp"
         android:textStyle="bold"
         android:textColor="@color/black"

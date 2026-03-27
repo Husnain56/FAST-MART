@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="6dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="#F5F5F5">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Favourite Button -->
+        <ImageView
+            android:id="@+id/iv_rec_favourite"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/ic_favourites"
+            app:tint="#CCCCCC"
+            android:padding="2dp"
+            android:contentDescription="Add to favourites" />
+
+        <!-- Product Image -->
+        <ImageView
+            android:id="@+id/iv_rec_image"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_below="@id/iv_rec_favourite"
+            android:layout_marginTop="4dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_launcher_foreground"
+            android:contentDescription="Recommended product image" />
+
+        <!-- Price -->
+        <TextView
+            android:id="@+id/tv_rec_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iv_rec_image"
+            android:layout_marginTop="10dp"
+            android:text="$349.99"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#1A1A1A" />
+
+        <!-- Product Name -->
+        <TextView
+            android:id="@+id/tv_rec_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_rec_price"
+            android:layout_marginTop="2dp"
+            android:text="SONY Premium Wireless Headphones"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#1A1A1A"
+            android:maxLines="2"
+            android:ellipsize="end" />
+
+        <!-- Model -->
+        <TextView
+            android:id="@+id/tv_rec_model"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_rec_name"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="4dp"
+            android:text="Model: WH-1000XM4, Black"
+            android:textSize="10sp"
+            android:textColor="#AAAAAA"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
