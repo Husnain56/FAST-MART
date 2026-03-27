@@ -1,5 +1,6 @@
 package com.example.fastmart;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -19,6 +20,10 @@ public class CartManager {
         return instance;
     }
 
+    public ArrayList<Product> getCartItems() {
+        return new ArrayList<>(productMap.values());
+    }
+
     public void addToCart(Product product) {
         int id = product.getProductId();
         if (cartMap.containsKey(id)) {
@@ -27,6 +32,19 @@ public class CartManager {
             cartMap.put(id, 1); // start with quantity 1
             productMap.put(id, product);
         }
+    }
+
+    public void updateQuantity(int productId, int newQuantity) {
+        if (newQuantity <= 0) {
+            removeFromCart(productId);
+        } else {
+            cartMap.put(productId, newQuantity);
+        }
+    }
+
+    public void removeFromCart(int productId) {
+        cartMap.remove(productId);
+        productMap.remove(productId);
     }
 
     public int getQuantity(int productId) {

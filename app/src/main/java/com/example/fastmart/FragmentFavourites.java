@@ -26,7 +26,7 @@ public class FragmentFavourites extends Fragment {
         rvFavourites = view.findViewById(R.id.rvFavourites);
         tvEmpty      = view.findViewById(R.id.tvEmpty);
 
-        // Start with current favourites from shared ProductList
+
         ArrayList<Product> favs = ProductList.getFavourites();
         adapter = new FavouriteProductAdapter(requireContext(), favs);
         rvFavourites.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -39,7 +39,6 @@ public class FragmentFavourites extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // User may have toggled hearts on Home tab — rebuild the list
         adapter.refreshList();
         updateEmptyState();
     }
