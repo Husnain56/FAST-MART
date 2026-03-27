@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:minHeight="80dp">
+
+        <!-- Product Image -->
+        <ImageView
+            android:id="@+id/ivProductImage"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:scaleType="centerCrop"
+            android:contentDescription="Product Image"/>
+
+        <!-- Anchor to keep text away from buttons -->
+        <Space
+            android:id="@+id/spaceEndAnchor"
+            android:layout_width="88dp"
+            android:layout_height="1dp"
+            android:layout_alignParentEnd="true"/>
+
+        <!-- Price -->
+        <TextView
+            android:id="@+id/tvProductPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/ivProductImage"
+            android:layout_toStartOf="@id/spaceEndAnchor"
+            android:layout_marginStart="12dp"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#1A1A1A"
+            android:fontFamily="sans-serif-medium"/>
+
+        <!-- Product Name -->
+        <TextView
+            android:id="@+id/tvProductName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/ivProductImage"
+            android:layout_toStartOf="@id/spaceEndAnchor"
+            android:layout_below="@id/tvProductPrice"
+            android:layout_marginStart="12dp"
+            android:textSize="14sp"
+            android:textColor="#1A1A1A"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif"/>
+
+        <!-- Product Description/Model -->
+        <TextView
+            android:id="@+id/tvProductDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/ivProductImage"
+            android:layout_toStartOf="@id/spaceEndAnchor"
+            android:layout_below="@id/tvProductName"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="2dp"
+            android:textSize="12sp"
+            android:textColor="#888888"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif"/>
+
+        <!-- Add to Cart Button -->
+        <ImageButton
+            android:id="@+id/ibAddToCart"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="4dp"
+            android:src="@drawable/ic_cart"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Add to cart"
+            app:tint="#1A1A1A" />
+
+        <!-- More Options Button -->
+        <ImageButton
+            android:id="@+id/ibMoreOptions"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_toStartOf="@id/ibAddToCart"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_more_vert"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="More options"
+            app:tint="#1A1A1A" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

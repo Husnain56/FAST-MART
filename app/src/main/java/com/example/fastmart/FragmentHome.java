@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.ranging.oob.TransportHandle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,32 +17,38 @@ public class FragmentHome extends Fragment {
     DealsAdapter dealsAdapter;
     RecommendedAdapter recommendedAdapter;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         init(view);
         return view;
     }
 
-    public void init(View view){
-        rvDeals = view.findViewById(R.id.rvDeals);
+    public void init(View view) {
+        rvDeals       = view.findViewById(R.id.rvDeals);
         rvRecommended = view.findViewById(R.id.rvRecommended);
 
         rvDeals.setHasFixedSize(true);
         rvRecommended.setHasFixedSize(true);
 
-        rvDeals.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        rvDeals.setLayoutManager(new LinearLayoutManager(
+                getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvRecommended.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
-        dealsAdapter = new DealsAdapter(getContext(), Deal_items.getDealProducts());
+        // Both use the cached shared list — same Product object references
+        dealsAdapter       = new DealsAdapter(getContext(), ProductList.getDeals());
+        recommendedAdapter = new RecommendedAdapter(getContext(), ProductList.getRecommended());
+
         rvDeals.setAdapter(dealsAdapter);
-
-        recommendedAdapter = new RecommendedAdapter(getContext(), Recommended_items.getRecommendedProducts());
         rvRecommended.setAdapter(recommendedAdapter);
+    }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Refresh heart icons if user removed a favourite from the Favourites tab
+        dealsAdapter.notifyDataSetChanged();
+        recommendedAdapter.notifyDataSetChanged();
     }
 }
