@@ -3,9 +3,11 @@ package com.example.fastmart;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.ranging.oob.TransportHandle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ public class FragmentHome extends Fragment {
 
     RecyclerView rvDeals, rvRecommended;
     DealsAdapter dealsAdapter;
+    RecommendedAdapter recommendedAdapter;
 
 
     @Override
@@ -28,12 +31,19 @@ public class FragmentHome extends Fragment {
     public void init(View view){
         rvDeals = view.findViewById(R.id.rvDeals);
         rvRecommended = view.findViewById(R.id.rvRecommended);
+
         rvDeals.setHasFixedSize(true);
         rvRecommended.setHasFixedSize(true);
+
+        rvDeals.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        rvRecommended.setLayoutManager(new GridLayoutManager(getContext(), 2));
+
         dealsAdapter = new DealsAdapter(getContext(), Deal_items.getDealProducts());
         rvDeals.setAdapter(dealsAdapter);
 
-        rvDeals.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        recommendedAdapter = new RecommendedAdapter(getContext(), Recommended_items.getRecommendedProducts());
+        rvRecommended.setAdapter(recommendedAdapter);
+
 
     }
 }

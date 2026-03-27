@@ -8,6 +8,7 @@ public class Deal_items {
         ArrayList<Product> deals = new ArrayList<>();
 
         deals.add(new Product(
+                101,
                 "RØDE PodMic",
                 "Microphones",
                 "Dynamic microphone, Speaker microphone",
@@ -19,6 +20,7 @@ public class Deal_items {
         ));
 
         deals.add(new Product(
+                102,
                 "Sony WH-1000XM4",
                 "Headphones",
                 "Industry leading noise cancellation",
@@ -30,6 +32,7 @@ public class Deal_items {
         ));
 
         deals.add(new Product(
+                103,
                 "Samsung 27\" Monitor",
                 "Monitors",
                 "4K UHD, 60Hz, IPS Panel",
@@ -41,6 +44,7 @@ public class Deal_items {
         ));
 
         deals.add(new Product(
+                104,
                 "Logitech MX Master 3",
                 "Accessories",
                 "Advanced wireless mouse for Mac & PC",
@@ -52,6 +56,7 @@ public class Deal_items {
         ));
 
         deals.add(new Product(
+                105,
                 "Apple AirPods Pro",
                 "Earbuds",
                 "Active noise cancellation, MagSafe charging",

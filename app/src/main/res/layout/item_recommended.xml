@@ -16,7 +16,7 @@
 
         <!-- Favourite Button -->
         <ImageView
-            android:id="@+id/iv_rec_favourite"
+            android:id="@+id/ivFavourite"
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:layout_alignParentEnd="true"
@@ -28,10 +28,10 @@
 
         <!-- Product Image -->
         <ImageView
-            android:id="@+id/iv_rec_image"
+            android:id="@+id/ivImage"
             android:layout_width="match_parent"
             android:layout_height="120dp"
-            android:layout_below="@id/iv_rec_favourite"
+            android:layout_below="@id/ivFavourite"
             android:layout_marginTop="4dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_launcher_foreground"
@@ -39,10 +39,10 @@
 
         <!-- Price -->
         <TextView
-            android:id="@+id/tv_rec_price"
+            android:id="@+id/tvPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/iv_rec_image"
+            android:layout_below="@id/ivImage"
             android:layout_marginTop="10dp"
             android:text="$349.99"
             android:textSize="14sp"
@@ -51,10 +51,10 @@
 
         <!-- Product Name -->
         <TextView
-            android:id="@+id/tv_rec_name"
+            android:id="@+id/tvName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tv_rec_price"
+            android:layout_below="@id/tvPrice"
             android:layout_marginTop="2dp"
             android:text="SONY Premium Wireless Headphones"
             android:textSize="12sp"
@@ -65,10 +65,10 @@
 
         <!-- Model -->
         <TextView
-            android:id="@+id/tv_rec_model"
+            android:id="@+id/tvModel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tv_rec_name"
+            android:layout_below="@id/tvName"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="4dp"
             android:text="Model: WH-1000XM4, Black"

@@ -56,7 +56,7 @@ public class DealsAdapter extends RecyclerView.Adapter<DealsAdapter.DealsViewHol
         return list.size();
     }
 
-    public class DealsViewHolder extends RecyclerView.ViewHolder {
+    public static class DealsViewHolder extends RecyclerView.ViewHolder {
 
         ImageView ivImage, ivFavourite;
         TextView tvCategory, tvName, tvDescription, tvPrice, tvOriginalPrice;

@@ -2,6 +2,7 @@ package com.example.fastmart;
 
 public class Product {
 
+    private int productId;
     private String name;
     private String category;
     private String description;
@@ -12,8 +13,9 @@ public class Product {
     private boolean onDeal;
 
     // Constructor
-    public Product(String name, String category, String description,
+    public Product(int id,String name, String category, String description,
                    double price, double originalPrice, int imageResId, boolean isFavourite, boolean onDeal) {
+        this.productId = id;
         this.name = name;
         this.category = category;
         this.description = description;
@@ -25,6 +27,8 @@ public class Product {
     }
 
     // Getters
+
+    public int getProductId(){ return this.productId; }
     public String getName() { return name; }
     public String getCategory() { return category; }
     public String getDescription() { return description; }
@@ -35,6 +39,7 @@ public class Product {
     public boolean onDeal(){ return onDeal; }
 
     // Setters
+    public void setProductId(int id) { this.productId = id; }
     public void setName(String name) { this.name = name; }
     public void setCategory(String category) { this.category = category; }
     public void setDescription(String description) { this.description = description; }
