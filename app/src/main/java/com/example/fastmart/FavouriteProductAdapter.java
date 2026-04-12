@@ -71,6 +71,7 @@ public class FavouriteProductAdapter extends RecyclerView.Adapter<FavouriteProdu
             CartManager.getInstance().addToCart(context, product);
             Toast.makeText(context, product.getName() + " added to cart!", Toast.LENGTH_SHORT).show();
         });
+        holder.ivImage.setImageResource(product.getImageResId());
     }
 
     @Override

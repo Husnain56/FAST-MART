@@ -61,7 +61,7 @@ public class DealsAdapter extends RecyclerView.Adapter<DealsAdapter.DealsViewHol
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return Math.min(list.size(), 3);
     }
 
     public static class DealsViewHolder extends RecyclerView.ViewHolder {

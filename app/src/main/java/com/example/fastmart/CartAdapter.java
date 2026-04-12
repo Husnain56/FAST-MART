@@ -41,8 +41,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         int productId = product.getProductId();
 
         holder.tvTitle.setText(product.getName());
-        holder.tvSubTitle.setText(product.getDescription());
         holder.tvPrice.setText("$" + String.format("%.2f", product.getPrice()));
+        holder.ivProduct.setImageResource(product.getImageResId());
 
         int currentQty = CartManager.getInstance().getQuantity(productId);
         holder.tvQty.setText(String.valueOf(currentQty));
@@ -80,6 +80,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 updateListener.onUpdateTotal();
             }
         });
+     //   holder.ivProduct.setImageResource(R.drawable.headphone_beige170);
     }
 
     @Override
