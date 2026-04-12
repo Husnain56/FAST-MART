@@ -53,7 +53,7 @@ public class ProductDetails extends AppCompatActivity {
         item_desc.setText(product.getDescription());
 
         btn_buy.setOnClickListener(v->{
-            CartManager.getInstance().addToCart(product);
+            CartManager.getInstance().addToCart(this, product);
             Toast.makeText(this, product.getName() + " added to cart!", Toast.LENGTH_SHORT).show();
         });
 

@@ -68,7 +68,7 @@ public class FavouriteProductAdapter extends RecyclerView.Adapter<FavouriteProdu
 
         // Cart icon → add to cart, stays in favourites
         holder.ibAddToCart.setOnClickListener(v -> {
-            CartManager.getInstance().addToCart(product);
+            CartManager.getInstance().addToCart(context, product);
             Toast.makeText(context, product.getName() + " added to cart!", Toast.LENGTH_SHORT).show();
         });
     }

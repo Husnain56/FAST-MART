@@ -41,6 +41,7 @@ public class MainViewPager extends AppCompatActivity implements FragmentCart.Sms
             return insets;
         });
         FavouritesManager.getInstance().loadFromPrefs(this);
+        CartManager.getInstance().loadFromPrefs(this);
         init();
     }
     public void init() {

@@ -51,8 +51,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             int currentPos = holder.getBindingAdapterPosition();
             if (currentPos != RecyclerView.NO_POSITION) {
                 int newQty = CartManager.getInstance().getQuantity(productId) + 1;
-                CartManager.getInstance().updateQuantity(productId, newQty);
-
+                CartManager.getInstance().updateQuantity(context, productId, newQty); // pass context
                 notifyItemChanged(currentPos);
                 updateListener.onUpdateTotal();
             }
@@ -64,25 +63,20 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 int existingQty = CartManager.getInstance().getQuantity(productId);
                 if (existingQty > 1) {
                     int newQty = existingQty - 1;
-                    CartManager.getInstance().updateQuantity(productId, newQty);
-
+                    CartManager.getInstance().updateQuantity(context, productId, newQty); // pass context
                     notifyItemChanged(currentPos);
                     updateListener.onUpdateTotal();
                 }
             }
         });
 
-        // Remove Item Immediately (Three-dot options icon)
         holder.ivOptions.setOnClickListener(v -> {
             int currentPos = holder.getBindingAdapterPosition();
             if (currentPos != RecyclerView.NO_POSITION) {
-                CartManager.getInstance().removeFromCart(productId);
-
+                CartManager.getInstance().removeFromCart(context, productId); // pass context
                 list.remove(currentPos);
-
                 notifyItemRemoved(currentPos);
                 notifyItemRangeChanged(currentPos, list.size());
-
                 updateListener.onUpdateTotal();
             }
         });
