@@ -1,6 +1,7 @@
 package com.example.fastmart;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -42,8 +44,14 @@ public class RecommendedAdapter extends RecyclerView.Adapter<RecommendedAdapter.
         );
 
         holder.ivFavourite.setOnClickListener(v -> {
-            product.setFavourite(!product.isFavourite());
+            FavouritesManager.getInstance().toggleFavourite(context, product);
             notifyItemChanged(position);
+        });
+
+        holder.cvRecommended.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ProductDetails.class);
+            intent.putExtra("product", product); // no cast needed;
+            context.startActivity(intent);
         });
     }
 
@@ -56,6 +64,7 @@ public class RecommendedAdapter extends RecyclerView.Adapter<RecommendedAdapter.
 
         ImageView ivImage, ivFavourite;
         TextView tvName,  tvPrice, tvModel;
+        CardView cvRecommended;
 
         public RecommendedViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -65,6 +74,7 @@ public class RecommendedAdapter extends RecyclerView.Adapter<RecommendedAdapter.
             tvName           = itemView.findViewById(R.id.tvName);
             tvPrice          = itemView.findViewById(R.id.tvPrice);
             tvModel          = itemView.findViewById(R.id.tvModel);
+            cvRecommended = itemView.findViewById(R.id.cvRecommended);
         }
     }
 }

@@ -40,6 +40,7 @@ public class MainViewPager extends AppCompatActivity implements FragmentCart.Sms
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        FavouritesManager.getInstance().loadFromPrefs(this);
         init();
     }
     public void init() {

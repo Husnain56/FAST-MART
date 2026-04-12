@@ -7,8 +7,6 @@ import java.util.ArrayList;
 public class FavouritesManager {
 
     private static FavouritesManager instance;
-
-    // The one shared list — all fragments reference this same instance
     private final ArrayList<Product> allProducts;
 
     private FavouritesManager() {
@@ -43,6 +41,31 @@ public class FavouritesManager {
 
     public void saveToPrefs(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("favList", Context.MODE_PRIVATE);
-        prefs.edit().putString("favourites", "").apply();
+        StringBuilder sb = new StringBuilder();
+        for (Product p : allProducts) {
+            if (p.isFavourite()) {
+                sb.append(p.getProductId()).append(",");
+            }
+        }
+        prefs.edit().putString("favourites", sb.toString()).apply();
+    }
+
+    public void loadFromPrefs(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("favList", Context.MODE_PRIVATE);
+        String saved = prefs.getString("favourites", "");
+        if (saved.isEmpty()) return;
+
+        String[] ids = saved.split(",");
+        for (String id : ids) {
+            if (!id.isEmpty()) {
+                Product p = findById(Integer.parseInt(id));
+                if (p != null) p.setFavourite(true);
+            }
+        }
+    }
+
+    public void toggleFavourite(Context context, Product product) {
+        product.setFavourite(!product.isFavourite());
+        saveToPrefs(context);
     }
 }

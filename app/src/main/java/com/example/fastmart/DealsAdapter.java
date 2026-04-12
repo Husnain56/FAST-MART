@@ -47,9 +47,8 @@ public class DealsAdapter extends RecyclerView.Adapter<DealsAdapter.DealsViewHol
                 product.isFavourite() ? R.drawable.ic_favourites_fill : R.drawable.ic_favourites
         );
 
-
         holder.ivFavourite.setOnClickListener(v -> {
-            product.setFavourite(!product.isFavourite());
+            FavouritesManager.getInstance().toggleFavourite(context, product);
             notifyItemChanged(position);
         });
         holder.cvDeal.setOnClickListener(v -> {

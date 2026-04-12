@@ -74,7 +74,14 @@ public class FragmentCart extends Fragment implements CartAdapter.OnCartUpdateLi
 
 
     }
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        cartList.clear();
+        cartList.addAll(CartManager.getInstance().getCartItems());
+        adapter.notifyDataSetChanged();
+        onUpdateTotal();
+    }
     @Override
     public void onUpdateTotal() {
         double total = 0.0;
