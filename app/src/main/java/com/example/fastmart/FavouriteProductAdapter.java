@@ -18,14 +18,13 @@ import java.util.ArrayList;
 public class FavouriteProductAdapter extends RecyclerView.Adapter<FavouriteProductAdapter.FavViewHolder> {
 
     private final Context context;
-    private final ArrayList<Product> list; // local display list, rebuilt on refresh
+    private final ArrayList<Product> list;
 
     public FavouriteProductAdapter(Context context, ArrayList<Product> list) {
         this.context = context;
         this.list = list;
     }
 
-    /** Rebuilds display list from ProductList — call this in onResume */
     public void refreshList() {
         list.clear();
         list.addAll(ProductList.getFavourites()); // filter isFavourite == true
@@ -50,7 +49,7 @@ public class FavouriteProductAdapter extends RecyclerView.Adapter<FavouriteProdu
 
         // Triple-dot → confirm delete from favourites
         holder.ibMoreOptions.setOnClickListener(v -> {
-            int pos = holder.getAdapterPosition();
+            int pos = holder.getBindingAdapterPosition();
             if (pos == RecyclerView.NO_ID) return;
             Product current = list.get(pos);
 

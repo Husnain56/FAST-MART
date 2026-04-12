@@ -46,54 +46,22 @@ public class ProductDetails extends AppCompatActivity {
 
         init();
         Intent intent = getIntent();
-        item_price.setText(intent.getStringExtra("price"));
-        item_name.setText(intent.getStringExtra("name"));
-        item_desc.setText(intent.getStringExtra("desc"));
-        String code = intent.getStringExtra("code");
-
-        if(code.equals("mic")){
-            item_image.setImageResource(R.drawable.mic350);
-            item_desc.setText(R.string.mic_desc);
-        }
-        else if(code.equals("hw")){
-            item_image.setImageResource(R.drawable.headphone_beige350);
-            item_desc.setText(R.string.headphone_desc);
-        }
-        else if(code.equals("hb")){
-            item_image.setImageResource(R.drawable.headphone_black350);
-            item_desc.setText(R.string.headphone_desc);
-        }
+        Product product = (Product) intent.getSerializableExtra("product");
+        item_image.setImageResource(product.getImageResId());
+        item_price.setText(String.format("$%.2f", product.getPrice()));
+        item_name.setText(product.getName());
+        item_desc.setText(product.getDescription());
 
         btn_buy.setOnClickListener(v->{
-            new AlertDialog.Builder(this).setTitle("Buy Now")
-                    .setMessage("Are you sure you want to buy "+item_name.getText()+" ?")
-                    .setPositiveButton("Yes", (dialog,which)->{
-                        Toast.makeText(this,"Sending confirmation message to your number",Toast.LENGTH_SHORT).show();
-                        checkMessagePermissions();
-                    })
-                    .setNegativeButton("Cancel",(dialog,which)->{
-                        dialog.dismiss();
-                    }).show();
+            CartManager.getInstance().addToCart(product);
+            Toast.makeText(this, product.getName() + " added to cart!", Toast.LENGTH_SHORT).show();
         });
+
         btn_back.setOnClickListener(v->{
             finish();
         });
     }
 
-    private void checkMessagePermissions() {
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
-                == PackageManager.PERMISSION_GRANTED)
-        {
-            sendMessage();
-        }
-        else
-        {
-            ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{Manifest.permission.SEND_SMS},
-                    SMS_REQUEST_CODE);
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

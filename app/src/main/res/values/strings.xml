@@ -30,6 +30,7 @@
     <string name="val_dob">12/07/1990</string>
     <string name="val_gender">Male</string>
     <string name="val_phone">+1 234 453 231 506</string>
+    <string name="btn_add_cart">Add To Cart</string>
 
     </resources>
 

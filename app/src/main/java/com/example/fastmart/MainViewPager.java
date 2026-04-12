@@ -1,9 +1,16 @@
 package com.example.fastmart;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.telephony.SmsManager;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -12,12 +19,16 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-public class MainViewPager extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class MainViewPager extends AppCompatActivity implements FragmentCart.SmsHandler {
 
     ViewPager2 mainViewPager;
     ViewPagerAdapter adapter;
     TabLayout bottomTabLayout;
     TabLayoutMediator mediator;
+    ArrayList<Product> cart;
+    private final int SMS_REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,5 +76,51 @@ public class MainViewPager extends AppCompatActivity {
         });
 
         mediator.attach();
+    }
+
+    private void checkMessagePermissions() {
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
+                == PackageManager.PERMISSION_GRANTED)
+        {
+            sendMessage();
+        }
+        else
+        {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.SEND_SMS},
+                    SMS_REQUEST_CODE);
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == SMS_REQUEST_CODE)
+        {
+            if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            {
+                sendMessage();
+            }
+            else
+            {
+                Toast.makeText(this, "You have to give permission to send message", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    }
+    private void sendMessage() {
+        StringBuilder msg = new StringBuilder("Products bought:\n");
+        for (Product p : cart) {
+            msg.append("- ").append(p.getName())
+                    .append(" ($").append(String.format("%.2f", p.getPrice())).append(")\n");
+        }
+        SmsManager smsManager = SmsManager.getDefault();
+        smsManager.sendTextMessage("+923263874962", null, msg.toString(), null, null);
+    }
+
+    @Override
+    public void checkSmsPermission(ArrayList<Product> cartList) {
+        this.cart = cartList;
+        checkMessagePermissions();
     }
 }
