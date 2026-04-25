@@ -14,15 +14,14 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class ProductDetails extends AppCompatActivity {
 
-    private final int SMS_REQUEST_CODE = 1;
     ImageView item_image, btn_back;
     TextView item_price, item_name, item_desc, item_details;
     Button btn_buy;
-
     String currentUserUid;
 
     @Override
@@ -40,45 +39,44 @@ public class ProductDetails extends AppCompatActivity {
 
         currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        if (getIntent().hasExtra("productId")) {
-            String productId = getIntent().getStringExtra("productId");
-            String sellerUid = getIntent().getStringExtra("sellerUid");
+        String productId = getIntent().getStringExtra("productId");
+        String sellerUid = getIntent().getStringExtra("sellerUid");
+        boolean isSeller = sellerUid.equals(currentUserUid);
 
-            FirebaseDatabase.getInstance().getReference()
-                    .child("users").child(sellerUid).child("products").child(productId)
-                    .get()
-                    .addOnSuccessListener(snapshot -> {
-                        ProductItem product = snapshot.getValue(ProductItem.class);
-                        if (product == null) return;
+        DatabaseReference ref = isSeller
+                ? FirebaseDatabase.getInstance().getReference()
+                .child("users").child(sellerUid).child("products").child(productId)
+                : FirebaseDatabase.getInstance().getReference()
+                .child("products").child(productId);
 
-                        item_name.setText(product.getName());
-                        item_desc.setText(product.getDescription());
-                        item_details.setText(product.getCategory());
+        ref.get()
+                .addOnSuccessListener(snapshot -> {
+                    ProductItem product = snapshot.getValue(ProductItem.class);
+                    if (product == null) return;
 
-                        if (product.isOnSale()) {
-                            item_price.setText(String.format("$%.2f", product.getDiscountedPrice()));
-                        } else {
-                            item_price.setText(String.format("$%.2f", product.getOriginalPrice()));
-                        }
+                    item_name.setText(product.getName());
+                    item_desc.setText(product.getDescription());
+                    item_details.setText(product.getCategory());
+
+                    if (product.isOnSale()) {
+                        item_price.setText(String.format("$%.2f", product.getDiscountedPrice()));
+                    } else {
+                        item_price.setText(String.format("$%.2f", product.getOriginalPrice()));
+                    }
+
+                    if (isSeller) {
                         item_image.setVisibility(View.GONE);
                         btn_buy.setVisibility(View.GONE);
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, "Failed to load product", Toast.LENGTH_SHORT).show();
-                    });
-
-        } else {
-            Product product = (Product) getIntent().getSerializableExtra("product");
-            item_image.setImageResource(product.getImageResId());
-            item_price.setText(String.format("$%.2f", product.getPrice()));
-            item_name.setText(product.getName());
-            item_desc.setText(product.getDescription());
-
-            btn_buy.setOnClickListener(v -> {
-                CartManager.getInstance().addToCart(this, product);
-                Toast.makeText(this, product.getName() + " added to cart!", Toast.LENGTH_SHORT).show();
-            });
-        }
+                    } else {
+                        item_image.setVisibility(View.GONE);
+                        btn_buy.setOnClickListener(v -> {
+                            Toast.makeText(this, product.getName() + " added to cart!", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Failed to load product", Toast.LENGTH_SHORT).show();
+                });
 
         btn_back.setOnClickListener(v -> finish());
     }

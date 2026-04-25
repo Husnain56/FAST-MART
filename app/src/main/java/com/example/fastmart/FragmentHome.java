@@ -2,6 +2,7 @@ package com.example.fastmart;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,12 +11,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FragmentHome extends Fragment {
 
     RecyclerView rvDeals, rvRecommended;
     DealsAdapter dealsAdapter;
-    RecommendedAdapter recommendedAdapter;
+    ProductAdapter productAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,19 +46,39 @@ public class FragmentHome extends Fragment {
                 getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvRecommended.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
-        // Both use the cached shared list — same Product object references
-        dealsAdapter       = new DealsAdapter(getContext(), ProductList.getDeals());
-        recommendedAdapter = new RecommendedAdapter(getContext(), ProductList.getRecommended());
+        dealsAdapter  = new DealsAdapter(getContext(), ProductList.getDeals());
+        productAdapter = new ProductAdapter(getContext());
 
         rvDeals.setAdapter(dealsAdapter);
-        rvRecommended.setAdapter(recommendedAdapter);
+        rvRecommended.setAdapter(productAdapter);
+
+        loadProducts();
+    }
+
+    private void loadProducts() {
+        FirebaseDatabase.getInstance().getReference()
+                .child("products")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        List<ProductItem> products = new ArrayList<>();
+                        for (DataSnapshot child : snapshot.getChildren()) {
+                            ProductItem product = child.getValue(ProductItem.class);
+                            if (product != null) products.add(product);
+                        }
+                        productAdapter.updateProducts(products);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(getContext(), "Failed to load products", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // Refresh heart icons if user removed a favourite from the Favourites tab
         dealsAdapter.notifyDataSetChanged();
-        recommendedAdapter.notifyDataSetChanged();
     }
 }
