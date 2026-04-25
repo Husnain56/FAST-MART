@@ -15,7 +15,6 @@
         android:layout_height="wrap_content"
         android:padding="12dp">
 
-        <!-- Favourite Button -->
         <ImageView
             android:id="@+id/ivFavourite"
             android:layout_width="28dp"
@@ -27,7 +26,6 @@
             android:padding="2dp"
             android:contentDescription="Add to favourites" />
 
-        <!-- Product Image -->
         <ImageView
             android:id="@+id/ivImage"
             android:layout_width="match_parent"
@@ -38,7 +36,6 @@
             android:src="@drawable/ic_launcher_foreground"
             android:contentDescription="Recommended product image" />
 
-        <!-- Price -->
         <TextView
             android:id="@+id/tvPrice"
             android:layout_width="wrap_content"
@@ -50,7 +47,6 @@
             android:textStyle="bold"
             android:textColor="#1A1A1A" />
 
-        <!-- Product Name -->
         <TextView
             android:id="@+id/tvName"
             android:layout_width="match_parent"
@@ -64,7 +60,6 @@
             android:maxLines="2"
             android:ellipsize="end" />
 
-        <!-- Model -->
         <TextView
             android:id="@+id/tvModel"
             android:layout_width="match_parent"

@@ -23,12 +23,11 @@ import java.util.Map;
 
 public class CreateProduct extends AppCompatActivity {
 
-    EditText etProductName, etProductType, etProductPrice, etProductDescription;
+    EditText etProductName, etProductType, etProductOriginalPrice, etProductDiscountedPrice, etProductDescription;
     Button btnAddProduct;
     FirebaseAuth auth;
     FirebaseUser user;
     FirebaseDatabase db;
-    DatabaseReference productsRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,26 +47,22 @@ public class CreateProduct extends AppCompatActivity {
     private void init() {
         etProductName = findViewById(R.id.etProductName);
         etProductType = findViewById(R.id.etProductType);
-        etProductPrice = findViewById(R.id.etProductPrice);
+        etProductOriginalPrice = findViewById(R.id.etProductOriginalPrice);
+        etProductDiscountedPrice = findViewById(R.id.etProductDiscountedPrice);
         etProductDescription = findViewById(R.id.etProductDescription);
         btnAddProduct = findViewById(R.id.btnAddProduct);
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         db = FirebaseDatabase.getInstance();
-
-        String uid = user.getUid();
-        productsRef = FirebaseDatabase.getInstance().getReference()
-                .child("users")
-                .child(uid)
-                .child("products");
     }
 
     private void setListeners() {
         btnAddProduct.setOnClickListener(v -> {
             String name = etProductName.getText().toString().trim();
             String type = etProductType.getText().toString().trim();
-            String priceStr = etProductPrice.getText().toString().trim();
+            String originalPriceStr = etProductOriginalPrice.getText().toString().trim();
+            String discountedPriceStr = etProductDiscountedPrice.getText().toString().trim();
             String description = etProductDescription.getText().toString().trim();
 
             if (TextUtils.isEmpty(name)) {
@@ -78,8 +73,8 @@ public class CreateProduct extends AppCompatActivity {
                 etProductType.setError("Product type is required");
                 return;
             }
-            if (TextUtils.isEmpty(priceStr)) {
-                etProductPrice.setError("Product price is required");
+            if (TextUtils.isEmpty(originalPriceStr)) {
+                etProductOriginalPrice.setError("Original price is required");
                 return;
             }
             if (TextUtils.isEmpty(description)) {
@@ -87,18 +82,37 @@ public class CreateProduct extends AppCompatActivity {
                 return;
             }
 
-            DatabaseReference newProductRef = productsRef.push();
-            String productId = newProductRef.getKey();
+            double originalPrice = Double.parseDouble(originalPriceStr);
+            double discountedPrice;
+
+            if (!TextUtils.isEmpty(discountedPriceStr)) {
+                discountedPrice = Double.parseDouble(discountedPriceStr);
+                if (discountedPrice >= originalPrice) {
+                    etProductDiscountedPrice.setError("Discounted price must be less than original price");
+                    return;
+                }
+            } else {
+                discountedPrice = originalPrice;
+            }
+
+            String uid = user.getUid();
+            String productId = db.getReference().child("products").push().getKey();
 
             Map<String, Object> product = new HashMap<>();
             product.put("productId", productId);
             product.put("name", name);
-            product.put("type", type);
-            product.put("price", Double.parseDouble(priceStr));
+            product.put("category", type);
+            product.put("originalPrice", originalPrice);
+            product.put("discountedPrice", discountedPrice);
             product.put("description", description);
+            product.put("sellerUid", uid);
             product.put("createdAt", ServerValue.TIMESTAMP);
 
-            newProductRef.setValue(product)
+            Map<String, Object> updates = new HashMap<>();
+            updates.put("users/" + uid + "/products/" + productId, product);
+            updates.put("products/" + productId, product);
+
+            db.getReference().updateChildren(updates)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Product added!", Toast.LENGTH_SHORT).show();
                         finish();

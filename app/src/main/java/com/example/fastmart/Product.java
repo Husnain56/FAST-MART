@@ -14,7 +14,6 @@ public class Product implements Serializable {
     private boolean isFavourite;
     private boolean onDeal;
 
-    // Constructor
     public Product(int id,String name, String category, String description,
                    double price, double originalPrice, int imageResId, boolean isFavourite, boolean onDeal) {
         this.productId = id;
@@ -28,7 +27,6 @@ public class Product implements Serializable {
         this.onDeal = onDeal;
     }
 
-    // Getters
 
     public int getProductId(){ return this.productId; }
     public String getName() { return name; }

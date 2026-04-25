@@ -46,6 +46,8 @@ dependencies {
     implementation(libs.navigation.ui)
     implementation(libs.firebase.database)
     implementation(libs.firebase.auth)
+    implementation("com.firebaseui:firebase-ui-database:9.1.1")
+    implementation("androidx.paging:paging-runtime:3.4.2")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

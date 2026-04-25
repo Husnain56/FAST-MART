@@ -1,37 +1,29 @@
 package com.example.fastmart;
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.telephony.SmsManager;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class ProductDetails extends AppCompatActivity {
 
     private final int SMS_REQUEST_CODE = 1;
-    ImageView item_image;
-    TextView item_price;
-    TextView item_name;
-    TextView item_desc;
-    TextView item_details;
-
-
-    ImageView btn_back;
+    ImageView item_image, btn_back;
+    TextView item_price, item_name, item_desc, item_details;
     Button btn_buy;
+
+    String currentUserUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,53 +37,59 @@ public class ProductDetails extends AppCompatActivity {
         });
 
         init();
-        Intent intent = getIntent();
-        Product product = (Product) intent.getSerializableExtra("product");
-        item_image.setImageResource(product.getImageResId());
-        item_price.setText(String.format("$%.2f", product.getPrice()));
-        item_name.setText(product.getName());
-        item_desc.setText(product.getDescription());
 
-        btn_buy.setOnClickListener(v->{
-            CartManager.getInstance().addToCart(this, product);
-            Toast.makeText(this, product.getName() + " added to cart!", Toast.LENGTH_SHORT).show();
-        });
+        currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        btn_back.setOnClickListener(v->{
-            finish();
-        });
-    }
+        if (getIntent().hasExtra("productId")) {
+            String productId = getIntent().getStringExtra("productId");
+            String sellerUid = getIntent().getStringExtra("sellerUid");
 
+            FirebaseDatabase.getInstance().getReference()
+                    .child("users").child(sellerUid).child("products").child(productId)
+                    .get()
+                    .addOnSuccessListener(snapshot -> {
+                        ProductItem product = snapshot.getValue(ProductItem.class);
+                        if (product == null) return;
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == SMS_REQUEST_CODE)
-        {
-            if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            {
-                sendMessage();
-            }
-            else
-            {
-                Toast.makeText(this, "You have to give permission to send message", Toast.LENGTH_SHORT).show();
-            }
+                        item_name.setText(product.getName());
+                        item_desc.setText(product.getDescription());
+                        item_details.setText(product.getCategory());
+
+                        if (product.isOnSale()) {
+                            item_price.setText(String.format("$%.2f", product.getDiscountedPrice()));
+                        } else {
+                            item_price.setText(String.format("$%.2f", product.getOriginalPrice()));
+                        }
+                        item_image.setVisibility(View.GONE);
+                        btn_buy.setVisibility(View.GONE);
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Failed to load product", Toast.LENGTH_SHORT).show();
+                    });
+
+        } else {
+            Product product = (Product) getIntent().getSerializableExtra("product");
+            item_image.setImageResource(product.getImageResId());
+            item_price.setText(String.format("$%.2f", product.getPrice()));
+            item_name.setText(product.getName());
+            item_desc.setText(product.getDescription());
+
+            btn_buy.setOnClickListener(v -> {
+                CartManager.getInstance().addToCart(this, product);
+                Toast.makeText(this, product.getName() + " added to cart!", Toast.LENGTH_SHORT).show();
+            });
         }
 
-    }
-    private void sendMessage(){
-        SmsManager smsManager = SmsManager.getDefault();
-        String msg = "Product "+ item_name.getText()+" bought";
-        smsManager.sendTextMessage("+923263874962", null, msg, null, null);
-    }
-    private void init(){
-        item_image = findViewById(R.id.product_image);
-        item_price = findViewById(R.id.lbl_price);
-        item_name = findViewById(R.id.lbl_name);
-        item_desc = findViewById(R.id.lbl_desc);
-        item_details = findViewById(R.id.lbl_details);
-        btn_buy = findViewById(R.id.btn_buy);
-        btn_back = findViewById(R.id.btnback);
+        btn_back.setOnClickListener(v -> finish());
     }
 
+    private void init() {
+        item_image   = findViewById(R.id.product_image);
+        item_price   = findViewById(R.id.lbl_price);
+        item_name    = findViewById(R.id.lbl_name);
+        item_desc    = findViewById(R.id.lbl_desc);
+        item_details = findViewById(R.id.lbl_details);
+        btn_buy      = findViewById(R.id.btn_buy);
+        btn_back     = findViewById(R.id.btnback);
+    }
 }
