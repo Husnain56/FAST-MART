@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -13,7 +14,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class fragmentLogin extends Fragment {
 
@@ -21,7 +27,8 @@ public class fragmentLogin extends Fragment {
     TextInputEditText etPassword;
     Button btnLogin;
 
-    SharedPreferences sPref;
+    FirebaseAuth auth;
+    FirebaseUser user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,7 +45,8 @@ public class fragmentLogin extends Fragment {
         etPassword  = view.findViewById(R.id.etPassword);
         btnLogin    = view.findViewById(R.id.btnLogin);
 
-        sPref = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
     }
     public void setListeners(){
         btnLogin.setOnClickListener(v -> {
@@ -57,25 +65,22 @@ public class fragmentLogin extends Fragment {
                 return;
             }
 
-            String savedEmail    = sPref.getString("email", "");
-            String savedPassword = sPref.getString("password", "");
+            btnLogin.setEnabled(false);
 
-            if (!email.equals(savedEmail)) {
-                etEmail.setError("Email not found");
-                return;
-            }
-            if (!password.equals(savedPassword)) {
-                Toast.makeText(getActivity(), "Incorrect Password", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            SharedPreferences.Editor editor = sPref.edit();
-            editor.putBoolean("loggedIn", true);
-            editor.apply();
-
-            Intent intent = new Intent(getActivity(), MainViewPager.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+            auth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                @Override
+                public void onSuccess(AuthResult authResult) {
+                    Intent intent = new Intent(getActivity(), MainViewPager.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                }
+            }).addOnFailureListener(new OnFailureListener(){
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    btnLogin.setEnabled(true);
+                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
         });
     }
 }
