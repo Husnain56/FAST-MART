@@ -11,5 +11,8 @@
         <item name="android:fontFamily">sans-serif</item>
     </style>
 
-
+    <style name="NavItemTextAppearance">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
 </resources>

@@ -1,8 +1,6 @@
 package com.example.fastmart;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,12 +13,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class fragmentLogin extends Fragment {
 
@@ -30,11 +27,11 @@ public class fragmentLogin extends Fragment {
 
     FirebaseAuth auth;
     FirebaseUser user;
+    DatabaseReference ref;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 
@@ -44,15 +41,17 @@ public class fragmentLogin extends Fragment {
         setListeners();
     }
 
-    public void init(View view){
-        etEmail     = view.findViewById(R.id.etEmail);
-        etPassword  = view.findViewById(R.id.etPassword);
-        btnLogin    = view.findViewById(R.id.btnLogin);
+    public void init(View view) {
+        etEmail    = view.findViewById(R.id.etEmail);
+        etPassword = view.findViewById(R.id.etPassword);
+        btnLogin   = view.findViewById(R.id.btnLogin);
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
+        ref  = FirebaseDatabase.getInstance().getReference("users");
     }
-    public void setListeners(){
+
+    public void setListeners() {
         btnLogin.setOnClickListener(v -> {
             String email    = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
@@ -65,26 +64,40 @@ public class fragmentLogin extends Fragment {
             }
 
             if (password.isEmpty()) {
-                Toast.makeText(getActivity(), "Password is required", Toast.LENGTH_SHORT).show();
+                etPassword.setError("Password is required");
                 return;
+            } else {
+                etPassword.setError(null);
             }
 
             btnLogin.setEnabled(false);
 
-            auth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                @Override
-                public void onSuccess(AuthResult authResult) {
-                    Intent intent = new Intent(getActivity(), MainViewPager.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                }
-            }).addOnFailureListener(new OnFailureListener(){
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    btnLogin.setEnabled(true);
-                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            });
+            auth.signInWithEmailAndPassword(email, password)
+                    .addOnSuccessListener(authResult -> {
+                        String uid = authResult.getUser().getUid();
+
+                        ref.child(uid).child("accountType").get()
+                                .addOnSuccessListener(snapshot -> {
+                                    String accountType = snapshot.getValue(String.class);
+
+                                    Intent intent;
+                                    if ("Seller".equals(accountType)) {
+                                        intent = new Intent(getActivity(), SellerHomeScreen.class);
+                                    } else {
+                                        intent = new Intent(getActivity(), MainViewPager.class);
+                                    }
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
+                                })
+                                .addOnFailureListener(e -> {
+                                    btnLogin.setEnabled(true);
+                                    Toast.makeText(getActivity(), "Failed to fetch user data: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                });
+                    })
+                    .addOnFailureListener(e -> {
+                        btnLogin.setEnabled(true);
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    });
         });
     }
 }
