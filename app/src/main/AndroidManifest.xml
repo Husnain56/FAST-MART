@@ -18,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FastMart">
         <activity
+            android:name=".CreateProduct"
+            android:exported="false" />
+        <activity
             android:name=".SellerHomeScreen"
             android:exported="false" />
         <activity
