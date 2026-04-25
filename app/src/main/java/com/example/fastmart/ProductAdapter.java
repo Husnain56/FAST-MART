@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -39,6 +40,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         ProductItem product = products.get(position);
+        FavouriteDB db = new FavouriteDB(context);
 
         holder.tvName.setText(product.getName());
         holder.tvModel.setText(product.getCategory());
@@ -48,6 +50,22 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         } else {
             holder.tvPrice.setText(String.format("$%.2f", product.getOriginalPrice()));
         }
+
+        holder.ivFavourite.setImageResource(
+                db.isFavourite(product.getProductId())
+                        ? R.drawable.ic_favourites_fill
+                        : R.drawable.ic_favourites
+        );
+
+        holder.ivFavourite.setOnClickListener(v -> {
+            if (db.isFavourite(product.getProductId())) {
+                db.removeFavourite(product.getProductId());
+                holder.ivFavourite.setImageResource(R.drawable.ic_favourites);
+            } else {
+                db.addFavourite(product);
+                holder.ivFavourite.setImageResource(R.drawable.ic_favourites_fill);
+            }
+        });
 
         holder.cvRecommended.setOnClickListener(v -> {
             Intent intent = new Intent(context, ProductDetails.class);
@@ -66,6 +84,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
         TextView tvName, tvPrice, tvModel;
         CardView cvRecommended;
+        ImageView ivFavourite;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -73,6 +92,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             tvPrice       = itemView.findViewById(R.id.tvPrice);
             tvModel       = itemView.findViewById(R.id.tvModel);
             cvRecommended = itemView.findViewById(R.id.cvRecommended);
+            ivFavourite   = itemView.findViewById(R.id.ivFavourite);
         }
     }
 }

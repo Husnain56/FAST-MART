@@ -61,8 +61,8 @@ public class FragmentHome extends Fragment {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        List<ProductItem> allProducts = new ArrayList<>();
-                        List<ProductItem> deals = new ArrayList<>();
+                        ArrayList<ProductItem> allProducts = new ArrayList<>();
+                        ArrayList<ProductItem> deals = new ArrayList<>();
 
                         for (DataSnapshot child : snapshot.getChildren()) {
                             ProductItem product = child.getValue(ProductItem.class);
@@ -80,5 +80,11 @@ public class FragmentHome extends Fragment {
                         Toast.makeText(getContext(), "Failed to load products", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (productAdapter != null) productAdapter.notifyDataSetChanged();
+        if (dealsAdapter != null) dealsAdapter.notifyDataSetChanged();
     }
 }

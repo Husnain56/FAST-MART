@@ -13,19 +13,18 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class DealsAdapter extends RecyclerView.Adapter<DealsAdapter.DealsViewHolder> {
 
     Context context;
-    List<ProductItem> list;
+    ArrayList<ProductItem> list;
 
     public DealsAdapter(Context context) {
         this.context = context;
         this.list = new ArrayList<>();
     }
 
-    public void updateDeals(List<ProductItem> deals) {
+    public void updateDeals(ArrayList<ProductItem> deals) {
         this.list = deals;
         notifyDataSetChanged();
     }
@@ -40,12 +39,29 @@ public class DealsAdapter extends RecyclerView.Adapter<DealsAdapter.DealsViewHol
     @Override
     public void onBindViewHolder(@NonNull DealsViewHolder holder, int position) {
         ProductItem product = list.get(position);
+        FavouriteDB db = new FavouriteDB(context);
 
         holder.tvCategory.setText(product.getCategory());
         holder.tvName.setText(product.getName());
         holder.tvDescription.setText(product.getDescription());
         holder.tvPrice.setText(String.format("$%.2f", product.getDiscountedPrice()));
         holder.tvOriginalPrice.setText(String.format("$%.2f", product.getOriginalPrice()));
+
+        holder.ivFavourite.setImageResource(
+                db.isFavourite(product.getProductId())
+                        ? R.drawable.ic_favourites_fill
+                        : R.drawable.ic_favourites
+        );
+
+        holder.ivFavourite.setOnClickListener(v -> {
+            if (db.isFavourite(product.getProductId())) {
+                db.removeFavourite(product.getProductId());
+                holder.ivFavourite.setImageResource(R.drawable.ic_favourites);
+            } else {
+                db.addFavourite(product);
+                holder.ivFavourite.setImageResource(R.drawable.ic_favourites_fill);
+            }
+        });
 
         holder.cvDeal.setOnClickListener(v -> {
             Intent intent = new Intent(context, ProductDetails.class);
@@ -62,7 +78,7 @@ public class DealsAdapter extends RecyclerView.Adapter<DealsAdapter.DealsViewHol
 
     public static class DealsViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView ivImage;
+        ImageView ivImage, ivFavourite;
         TextView tvCategory, tvName, tvDescription, tvPrice, tvOriginalPrice;
         CardView cvDeal;
 
@@ -70,6 +86,7 @@ public class DealsAdapter extends RecyclerView.Adapter<DealsAdapter.DealsViewHol
             super(itemView);
 
             ivImage         = itemView.findViewById(R.id.iv_deal_image);
+            ivFavourite     = itemView.findViewById(R.id.iv_deal_favourite);
             tvCategory      = itemView.findViewById(R.id.tv_deal_category);
             tvName          = itemView.findViewById(R.id.tv_deal_name);
             tvDescription   = itemView.findViewById(R.id.tv_deal_description);

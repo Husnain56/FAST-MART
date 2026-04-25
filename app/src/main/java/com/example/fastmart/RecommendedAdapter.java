@@ -2,6 +2,7 @@ package com.example.fastmart;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +18,13 @@ import java.util.ArrayList;
 public class RecommendedAdapter extends RecyclerView.Adapter<RecommendedAdapter.RecommendedViewHolder> {
 
     Context context;
-    ArrayList<Product> list;
-    public RecommendedAdapter(Context context,ArrayList<Product> list){
+    ArrayList<ProductItem> list;
+
+    public RecommendedAdapter(Context context, ArrayList<ProductItem> list) {
         this.context = context;
         this.list = list;
     }
+
     @NonNull
     @Override
     public RecommendedViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -31,26 +34,40 @@ public class RecommendedAdapter extends RecyclerView.Adapter<RecommendedAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull RecommendedViewHolder holder, int position) {
-        Product product = list.get(position);
+        Log.d("FAV", "ivFavourite: " + holder.ivFavourite);
+        ProductItem product = list.get(position);
+        FavouriteDB db = new FavouriteDB(context);
 
         holder.tvName.setText(product.getName());
-        holder.tvPrice.setText(String.format("$%.2f", product.getPrice()));
-        holder.tvModel.setText(product.getDescription());
+        holder.tvModel.setText(product.getCategory());
 
-        holder.ivImage.setImageResource(product.getImageResId());
+        if (product.isOnSale()) {
+            holder.tvPrice.setText(String.format("$%.2f", product.getDiscountedPrice()));
+        } else {
+            holder.tvPrice.setText(String.format("$%.2f", product.getOriginalPrice()));
+        }
 
         holder.ivFavourite.setImageResource(
-                product.isFavourite() ? R.drawable.ic_favourites_fill : R.drawable.ic_favourites
+                db.isFavourite(product.getProductId())
+                        ? R.drawable.ic_favourites_fill
+                        : R.drawable.ic_favourites
         );
 
+
         holder.ivFavourite.setOnClickListener(v -> {
-            FavouritesManager.getInstance().toggleFavourite(context, product);
-            notifyItemChanged(position);
+            if (db.isFavourite(product.getProductId())) {
+                db.removeFavourite(product.getProductId());
+                holder.ivFavourite.setImageResource(R.drawable.ic_favourites);
+            } else {
+                db.addFavourite(product);
+                holder.ivFavourite.setImageResource(R.drawable.ic_favourites_fill);
+            }
         });
 
         holder.cvRecommended.setOnClickListener(v -> {
             Intent intent = new Intent(context, ProductDetails.class);
-            intent.putExtra("product", product); // no cast needed;
+            intent.putExtra("productId", product.getProductId());
+            intent.putExtra("sellerUid", product.getSellerUid());
             context.startActivity(intent);
         });
     }
@@ -63,17 +80,16 @@ public class RecommendedAdapter extends RecyclerView.Adapter<RecommendedAdapter.
     public static class RecommendedViewHolder extends RecyclerView.ViewHolder {
 
         ImageView ivImage, ivFavourite;
-        TextView tvName,  tvPrice, tvModel;
+        TextView tvName, tvPrice, tvModel;
         CardView cvRecommended;
 
         public RecommendedViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            ivImage          = itemView.findViewById(R.id.ivImage);
-            ivFavourite      = itemView.findViewById(R.id.ivFavourite);
-            tvName           = itemView.findViewById(R.id.tvName);
-            tvPrice          = itemView.findViewById(R.id.tvPrice);
-            tvModel          = itemView.findViewById(R.id.tvModel);
+            ivImage       = itemView.findViewById(R.id.ivImage);
+            ivFavourite   = itemView.findViewById(R.id.ivFavourite);
+            tvName        = itemView.findViewById(R.id.tvName);
+            tvPrice       = itemView.findViewById(R.id.tvPrice);
+            tvModel       = itemView.findViewById(R.id.tvModel);
             cvRecommended = itemView.findViewById(R.id.cvRecommended);
         }
     }

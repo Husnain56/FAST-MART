@@ -18,16 +18,22 @@ import java.util.ArrayList;
 public class FavouriteProductAdapter extends RecyclerView.Adapter<FavouriteProductAdapter.FavViewHolder> {
 
     private final Context context;
-    private final ArrayList<Product> list;
+    private final FavouriteDB favouriteDB;
+    private ArrayList<ProductItem> list;
 
-    public FavouriteProductAdapter(Context context, ArrayList<Product> list) {
-        this.context = context;
-        this.list = list;
+    public FavouriteProductAdapter(Context context, ArrayList<ProductItem> list) {
+        this.context     = context;
+        this.favouriteDB = new FavouriteDB(context);
+        this.list        = list;
+    }
+
+    public void updateList(ArrayList<ProductItem> newList) {
+        this.list = newList;
+        notifyDataSetChanged();
     }
 
     public void refreshList() {
-        list.clear();
-        list.addAll(ProductList.getFavourites()); // filter isFavourite == true
+        list = (ArrayList<ProductItem>) favouriteDB.getAllFavourites();
         notifyDataSetChanged();
     }
 
@@ -40,38 +46,34 @@ public class FavouriteProductAdapter extends RecyclerView.Adapter<FavouriteProdu
 
     @Override
     public void onBindViewHolder(@NonNull FavViewHolder holder, int position) {
-        Product product = list.get(position);
+        ProductItem product = list.get(position);
 
         holder.tvName.setText(product.getName());
-        holder.tvPrice.setText(String.format("$%.2f", product.getPrice()));
         holder.tvDescription.setText(product.getDescription());
-        holder.ivImage.setImageResource(product.getImageResId());
 
-        // Triple-dot → confirm delete from favourites
+        if (product.isOnSale()) {
+            holder.tvPrice.setText(String.format("$%.2f", product.getDiscountedPrice()));
+        } else {
+            holder.tvPrice.setText(String.format("$%.2f", product.getOriginalPrice()));
+        }
+
         holder.ibMoreOptions.setOnClickListener(v -> {
-            int pos = holder.getBindingAdapterPosition();
-            if (pos == RecyclerView.NO_ID) return;
-            Product current = list.get(pos);
-
             new AlertDialog.Builder(context)
                     .setTitle("Remove Favourite")
-                    .setMessage("Do you want to delete this product from favourites?")
+                    .setMessage("Do you want to remove this product from favourites?")
                     .setPositiveButton("Yes", (dialog, which) -> {
-                        current.setFavourite(false); // flips flag on shared Product object
-                        list.remove(pos);
-                        notifyItemRemoved(pos);
-                        notifyItemRangeChanged(pos, list.size());
+                        favouriteDB.removeFavourite(product.getProductId());
+                        list.remove(position);
+                        notifyItemRemoved(position);
+                        notifyItemRangeChanged(position, list.size());
                     })
                     .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
                     .show();
         });
 
-        // Cart icon → add to cart, stays in favourites
         holder.ibAddToCart.setOnClickListener(v -> {
-            CartManager.getInstance().addToCart(context, product);
             Toast.makeText(context, product.getName() + " added to cart!", Toast.LENGTH_SHORT).show();
         });
-        holder.ivImage.setImageResource(product.getImageResId());
     }
 
     @Override
