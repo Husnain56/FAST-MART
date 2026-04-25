@@ -46,7 +46,7 @@ public class FragmentHome extends Fragment {
                 getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvRecommended.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
-        dealsAdapter  = new DealsAdapter(getContext(), ProductList.getDeals());
+        dealsAdapter   = new DealsAdapter(getContext());
         productAdapter = new ProductAdapter(getContext());
 
         rvDeals.setAdapter(dealsAdapter);
@@ -61,12 +61,18 @@ public class FragmentHome extends Fragment {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        List<ProductItem> products = new ArrayList<>();
+                        List<ProductItem> allProducts = new ArrayList<>();
+                        List<ProductItem> deals = new ArrayList<>();
+
                         for (DataSnapshot child : snapshot.getChildren()) {
                             ProductItem product = child.getValue(ProductItem.class);
-                            if (product != null) products.add(product);
+                            if (product == null) continue;
+                            allProducts.add(product);
+                            if (product.isOnSale()) deals.add(product);
                         }
-                        productAdapter.updateProducts(products);
+
+                        productAdapter.updateProducts(allProducts);
+                        dealsAdapter.updateDeals(deals);
                     }
 
                     @Override
@@ -74,11 +80,5 @@ public class FragmentHome extends Fragment {
                         Toast.makeText(getContext(), "Failed to load products", Toast.LENGTH_SHORT).show();
                     }
                 });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        dealsAdapter.notifyDataSetChanged();
     }
 }
