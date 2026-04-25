@@ -46,7 +46,7 @@ public class OnboardingActivity extends AppCompatActivity {
         });
     }
     public void moveToLogin(){
-        editor.putBoolean("firstTime",false);
+        editor.putBoolean("onboarded",true);
         editor.apply();
         Intent intent = new Intent(this, AuthenticationActivity.class);
         startActivity(intent);

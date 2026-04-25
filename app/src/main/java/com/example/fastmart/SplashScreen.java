@@ -54,7 +54,7 @@ public class SplashScreen extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         truck = findViewById(R.id.delivery_truck);
-        onboardingPref = getSharedPreferences("o1nboarding",MODE_PRIVATE);
+        onboardingPref = getSharedPreferences("onboarding",MODE_PRIVATE);
     }
     private Intent createIntent() {
 

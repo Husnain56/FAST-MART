@@ -21,6 +21,7 @@
             android:textSize="22sp"
             android:textStyle="bold" />
 
+        <!-- Full Name -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,6 +29,7 @@
             android:textColor="#333333"
             android:textStyle="bold" />
         <EditText
+            android:id="@+id/etName"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginBottom="16dp"
@@ -37,13 +39,15 @@
             android:padding="10dp"
             android:text="@string/val_name" />
 
+        <!-- Address -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Email Address"
+            android:text="Address"
             android:textColor="#333333"
             android:textStyle="bold" />
         <EditText
+            android:id="@+id/etAddress"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginBottom="16dp"
@@ -51,8 +55,27 @@
             android:clickable="false"
             android:focusable="false"
             android:padding="10dp"
-            android:text="@string/val_email" />
+            android:text="Address" />
 
+        <!-- Country -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Country"
+            android:textColor="#333333"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etCountry"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="16dp"
+            android:background="@android:drawable/editbox_background_normal"
+            android:clickable="false"
+            android:focusable="false"
+            android:padding="10dp"
+            android:text="Country" />
+
+        <!-- Date of Birth -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -60,6 +83,7 @@
             android:textColor="#333333"
             android:textStyle="bold" />
         <EditText
+            android:id="@+id/etDob"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginBottom="16dp"
@@ -69,6 +93,7 @@
             android:padding="10dp"
             android:text="@string/val_dob" />
 
+        <!-- Gender -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -76,6 +101,7 @@
             android:textColor="#333333"
             android:textStyle="bold" />
         <EditText
+            android:id="@+id/etGender"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginBottom="16dp"
@@ -85,6 +111,7 @@
             android:padding="10dp"
             android:text="@string/val_gender" />
 
+        <!-- Phone Number -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -92,14 +119,27 @@
             android:textColor="#333333"
             android:textStyle="bold" />
         <EditText
+            android:id="@+id/etPhone"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="24dp"
             android:background="@android:drawable/editbox_background_normal"
             android:clickable="false"
             android:focusable="false"
             android:padding="10dp"
             android:text="@string/val_phone" />
+
+        <!-- Log Out Button -->
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginBottom="16dp"
+            android:text="Log Out"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:backgroundTint="#E8445A"/>
 
     </LinearLayout>
 </ScrollView>
