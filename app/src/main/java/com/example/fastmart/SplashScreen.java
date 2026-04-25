@@ -14,12 +14,18 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.Firebase;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class SplashScreen extends AppCompatActivity {
 
     ImageView truck;
     Animation moveTruck;
     SharedPreferences onboardingPref;
-    SharedPreferences userPref;
+
+    FirebaseAuth auth;
+    FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,16 +51,18 @@ public class SplashScreen extends AppCompatActivity {
     }
 
     private void init(){
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
         truck = findViewById(R.id.delivery_truck);
-        onboardingPref = getSharedPreferences("onboarding",MODE_PRIVATE);
-        userPref = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        onboardingPref = getSharedPreferences("o1nboarding",MODE_PRIVATE);
     }
     private Intent createIntent() {
-        if (onboardingPref.getBoolean("firstTime", true)) {
-            return new Intent(this, OnboardingActivity.class);
-        }
-        if (userPref.getBoolean("loggedIn", false)) {
+
+        if (user!=null){
             return new Intent(this, MainViewPager.class);
+        }
+        else if (!onboardingPref.getBoolean("onboarded", false)) {
+            return new Intent(this, OnboardingActivity.class);
         }
         return new Intent(this, AuthenticationActivity.class);
     }
