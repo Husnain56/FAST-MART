@@ -18,8 +18,15 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MainViewPager extends AppCompatActivity implements FragmentCart.SmsHandler {
 
@@ -112,6 +119,55 @@ public class MainViewPager extends AppCompatActivity implements FragmentCart.Sms
         }
         SmsManager smsManager = SmsManager.getDefault();
         smsManager.sendTextMessage("+923263874962", null, msg.toString(), null, null);
+        storeOrders();
+    }
+
+    private void storeOrders() {
+        String buyerUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ordersRef = FirebaseDatabase.getInstance().getReference().child("orders");
+        CartDB cartDB = new CartDB(this);
+        cartDB.Open();
+
+        Map<String, List<ProductItem>> itemsBySeller = new HashMap<>();
+        for (ProductItem item : cart) {
+            String sellerUid = item.getSellerUid();
+            if (!itemsBySeller.containsKey(sellerUid)) {
+                itemsBySeller.put(sellerUid, new ArrayList<>());
+            }
+            itemsBySeller.get(sellerUid).add(item);
+        }
+
+        for (Map.Entry<String, List<ProductItem>> entry : itemsBySeller.entrySet()) {
+            String sellerUid = entry.getKey();
+            List<ProductItem> sellerItems = entry.getValue();
+
+            Map<String, Object> itemsMap = new HashMap<>();
+            double total = 0;
+
+            for (ProductItem item : sellerItems) {
+                double price = item.isOnSale() ? item.getDiscountedPrice() : item.getOriginalPrice();
+                int quantity = cartDB.getQuantity(item.getProductId());
+                total += price * quantity;
+
+                Map<String, Object> itemData = new HashMap<>();
+                itemData.put("name",     item.getName());
+                itemData.put("price",    price);
+                itemData.put("category", item.getCategory());
+                itemData.put("quantity", quantity);
+                itemsMap.put(item.getProductId(), itemData);
+            }
+
+            Map<String, Object> order = new HashMap<>();
+            order.put("buyerUid",   buyerUid);
+            order.put("items",      itemsMap);
+            order.put("totalPrice", total);
+            order.put("orderedAt",  ServerValue.TIMESTAMP);
+            order.put("status",     "pending");
+
+            ordersRef.child(sellerUid).push().setValue(order);
+        }
+
+        cartDB.Close();
     }
 
     @Override

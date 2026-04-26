@@ -13,8 +13,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.fastmart.CartDB;
-
 import java.util.ArrayList;
 
 public class FavouriteProductAdapter extends RecyclerView.Adapter<FavouriteProductAdapter.FavViewHolder> {

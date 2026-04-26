@@ -11,7 +11,6 @@ import java.util.Map;
 public class CartManager {
 
     private static CartManager instance;
-    // Maps productId → quantity
     private final LinkedHashMap<Integer, Integer> cartMap = new LinkedHashMap<>();
     private final LinkedHashMap<Integer, Product> productMap = new LinkedHashMap<>();
 

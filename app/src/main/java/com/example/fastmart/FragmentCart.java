@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import com.example.fastmart.CartDB;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -71,6 +70,12 @@ public class FragmentCart extends Fragment implements CartAdapter.OnCartUpdateLi
                     .setPositiveButton("Yes", (dialog, which) -> {
                         Toast.makeText(requireContext(), "Sending confirmation to your number", Toast.LENGTH_SHORT).show();
                         smsHandler.checkSmsPermission(cartList);
+                        db.Open();
+                        db.clearCart();
+                        db.Close();
+                        cartList.clear();
+                        adapter.notifyDataSetChanged();
+                        onUpdateTotal();
                     })
                     .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                     .show();
@@ -90,6 +95,7 @@ public class FragmentCart extends Fragment implements CartAdapter.OnCartUpdateLi
 
     @Override
     public void onUpdateTotal() {
+        if (db == null) return;
         db.Open();
         double total = db.getTotalPrice();
         db.Close();
