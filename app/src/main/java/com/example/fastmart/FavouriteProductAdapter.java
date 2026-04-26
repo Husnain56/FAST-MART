@@ -33,7 +33,9 @@ public class FavouriteProductAdapter extends RecyclerView.Adapter<FavouriteProdu
     }
 
     public void refreshList() {
-        list = (ArrayList<ProductItem>) favouriteDB.getAllFavourites();
+        favouriteDB.Open();
+        list = favouriteDB.getAllFavourites();
+        favouriteDB.Close();
         notifyDataSetChanged();
     }
 
@@ -62,7 +64,9 @@ public class FavouriteProductAdapter extends RecyclerView.Adapter<FavouriteProdu
                     .setTitle("Remove Favourite")
                     .setMessage("Do you want to remove this product from favourites?")
                     .setPositiveButton("Yes", (dialog, which) -> {
+                        favouriteDB.Open();
                         favouriteDB.removeFavourite(product.getProductId());
+                        favouriteDB.Close();
                         list.remove(position);
                         notifyItemRemoved(position);
                         notifyItemRangeChanged(position, list.size());

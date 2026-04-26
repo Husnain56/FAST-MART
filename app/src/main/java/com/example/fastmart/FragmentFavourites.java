@@ -38,7 +38,9 @@ public class FragmentFavourites extends Fragment {
         rvFavourites = view.findViewById(R.id.rvFavourites);
         tvEmpty      = view.findViewById(R.id.tvEmpty);
 
+        db.Open();
         ArrayList<ProductItem> favs = db.getAllFavourites();
+        db.Close();
         adapter = new FavouriteProductAdapter(requireContext(), favs);
         rvFavourites.setLayoutManager(new LinearLayoutManager(requireContext()));
         rvFavourites.setAdapter(adapter);
@@ -49,7 +51,9 @@ public class FragmentFavourites extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        db.Open();
         ArrayList<ProductItem> favs = db.getAllFavourites();
+        db.Close();
         adapter.updateList(favs);
         updateEmptyState(favs);
     }

@@ -8,12 +8,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 
-public class FavouriteDB {
+public class CartDB {
 
     Context context;
-    private static final String DB_NAME          = "FavouriteDB";
-    private static final int    DB_VERSION       = 1;
-    private static final String TABLE_NAME       = "favourites";
+    private static final String DB_NAME              = "CartDB";
+    private static final int    DB_VERSION           = 1;
+    private static final String TABLE_NAME           = "cart";
     private static final String COL_PRODUCT_ID       = "productId";
     private static final String COL_NAME             = "name";
     private static final String COL_CATEGORY         = "category";
@@ -22,28 +22,33 @@ public class FavouriteDB {
     private static final String COL_DESCRIPTION      = "description";
     private static final String COL_SELLER_UID       = "sellerUid";
     private static final String COL_CREATED_AT       = "createdAt";
+    private static final String COL_QUANTITY         = "quantity";
 
-    private ProductOpenHelper helper;
-
+    private CartOpenHelper helper;
     private SQLiteDatabase sqLiteDatabase_write;
     private SQLiteDatabase sqLiteDatabase_read;
-    public FavouriteDB(Context context) {
+
+    public CartDB(Context context) {
         this.context = context;
     }
 
-    public void Open(){
-        helper = new ProductOpenHelper(context);
+    public void Open() {
+        helper               = new CartOpenHelper(context);
         sqLiteDatabase_write = helper.getWritableDatabase();
-        sqLiteDatabase_read = helper.getReadableDatabase();
+        sqLiteDatabase_read  = helper.getReadableDatabase();
     }
 
-    public void Close(){
+    public void Close() {
         sqLiteDatabase_read.close();
         sqLiteDatabase_write.close();
         helper.close();
     }
 
-    public void addFavourite(ProductItem product) {
+    public void addToCart(ProductItem product) {
+        if (isInCart(product.getProductId())) {
+            increaseQuantity(product.getProductId());
+            return;
+        }
         ContentValues values = new ContentValues();
         values.put(COL_PRODUCT_ID,       product.getProductId());
         values.put(COL_NAME,             product.getName());
@@ -53,15 +58,45 @@ public class FavouriteDB {
         values.put(COL_DESCRIPTION,      product.getDescription());
         values.put(COL_SELLER_UID,       product.getSellerUid());
         values.put(COL_CREATED_AT,       product.getCreatedAt());
+        values.put(COL_QUANTITY,         1);
         sqLiteDatabase_write.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
-    public void removeFavourite(String productId) {
-        sqLiteDatabase_write.execSQL("DELETE FROM " + TABLE_NAME + " WHERE " + COL_PRODUCT_ID + " = ?",
-                new String[]{productId});
+    public void removeFromCart(String productId) {
+        sqLiteDatabase_write.execSQL("DELETE FROM " + TABLE_NAME +
+                " WHERE " + COL_PRODUCT_ID + " = ?", new String[]{productId});
     }
 
-    public boolean isFavourite(String productId) {
+    public void increaseQuantity(String productId) {
+        sqLiteDatabase_write.execSQL("UPDATE " + TABLE_NAME +
+                " SET " + COL_QUANTITY + " = " + COL_QUANTITY + " + 1" +
+                " WHERE " + COL_PRODUCT_ID + " = ?", new String[]{productId});
+    }
+
+    public void decreaseQuantity(String productId) {
+        int qty = getQuantity(productId);
+        if (qty <= 1) {
+            removeFromCart(productId);
+        } else {
+            sqLiteDatabase_write.execSQL("UPDATE " + TABLE_NAME +
+                    " SET " + COL_QUANTITY + " = " + COL_QUANTITY + " - 1" +
+                    " WHERE " + COL_PRODUCT_ID + " = ?", new String[]{productId});
+        }
+    }
+
+    public int getQuantity(String productId) {
+        Cursor cursor = sqLiteDatabase_read.rawQuery("SELECT " + COL_QUANTITY +
+                " FROM " + TABLE_NAME +
+                " WHERE " + COL_PRODUCT_ID + " = ?", new String[]{productId});
+        int qty = 0;
+        if (cursor.moveToFirst()) {
+            qty = cursor.getInt(0);
+        }
+        cursor.close();
+        return qty;
+    }
+
+    public boolean isInCart(String productId) {
         Cursor cursor = sqLiteDatabase_read.rawQuery("SELECT * FROM " + TABLE_NAME +
                 " WHERE " + COL_PRODUCT_ID + " = ?", new String[]{productId});
         boolean exists = cursor.getCount() > 0;
@@ -69,7 +104,7 @@ public class FavouriteDB {
         return exists;
     }
 
-    public ArrayList<ProductItem> getAllFavourites() {
+    public ArrayList<ProductItem> getAllCartItems() {
         ArrayList<ProductItem> list = new ArrayList<>();
         Cursor cursor = sqLiteDatabase_read.rawQuery("SELECT * FROM " + TABLE_NAME, null);
         if (cursor.moveToFirst()) {
@@ -91,9 +126,24 @@ public class FavouriteDB {
         return list;
     }
 
-    private static class ProductOpenHelper extends SQLiteOpenHelper {
+    public double getTotalPrice() {
+        Cursor cursor = sqLiteDatabase_read.rawQuery("SELECT SUM(" +
+                COL_DISCOUNTED_PRICE + " * " + COL_QUANTITY + ") FROM " + TABLE_NAME, null);
+        double total = 0;
+        if (cursor.moveToFirst()) {
+            total = cursor.getDouble(0);
+        }
+        cursor.close();
+        return total;
+    }
 
-        public ProductOpenHelper(Context context) {
+    public void clearCart() {
+        sqLiteDatabase_write.execSQL("DELETE FROM " + TABLE_NAME);
+    }
+
+    private static class CartOpenHelper extends SQLiteOpenHelper {
+
+        public CartOpenHelper(Context context) {
             super(context, DB_NAME, null, DB_VERSION);
         }
 
@@ -107,7 +157,8 @@ public class FavouriteDB {
                     COL_DISCOUNTED_PRICE + " REAL, " +
                     COL_DESCRIPTION      + " TEXT, " +
                     COL_SELLER_UID       + " TEXT, " +
-                    COL_CREATED_AT       + " INTEGER)");
+                    COL_CREATED_AT       + " INTEGER, " +
+                    COL_QUANTITY         + " INTEGER)");
         }
 
         @Override

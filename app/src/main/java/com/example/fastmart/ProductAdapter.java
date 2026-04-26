@@ -51,13 +51,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             holder.tvPrice.setText(String.format("$%.2f", product.getOriginalPrice()));
         }
 
+        db.Open();
         holder.ivFavourite.setImageResource(
                 db.isFavourite(product.getProductId())
                         ? R.drawable.ic_favourites_fill
                         : R.drawable.ic_favourites
         );
+        db.Close();
 
         holder.ivFavourite.setOnClickListener(v -> {
+            db.Open();
             if (db.isFavourite(product.getProductId())) {
                 db.removeFavourite(product.getProductId());
                 holder.ivFavourite.setImageResource(R.drawable.ic_favourites);
@@ -65,6 +68,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 db.addFavourite(product);
                 holder.ivFavourite.setImageResource(R.drawable.ic_favourites_fill);
             }
+            db.Close();
         });
 
         holder.cvRecommended.setOnClickListener(v -> {

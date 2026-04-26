@@ -47,13 +47,16 @@ public class DealsAdapter extends RecyclerView.Adapter<DealsAdapter.DealsViewHol
         holder.tvPrice.setText(String.format("$%.2f", product.getDiscountedPrice()));
         holder.tvOriginalPrice.setText(String.format("$%.2f", product.getOriginalPrice()));
 
+        db.Open();
         holder.ivFavourite.setImageResource(
                 db.isFavourite(product.getProductId())
                         ? R.drawable.ic_favourites_fill
                         : R.drawable.ic_favourites
         );
+        db.Close();
 
         holder.ivFavourite.setOnClickListener(v -> {
+            db.Open();
             if (db.isFavourite(product.getProductId())) {
                 db.removeFavourite(product.getProductId());
                 holder.ivFavourite.setImageResource(R.drawable.ic_favourites);
@@ -61,6 +64,7 @@ public class DealsAdapter extends RecyclerView.Adapter<DealsAdapter.DealsViewHol
                 db.addFavourite(product);
                 holder.ivFavourite.setImageResource(R.drawable.ic_favourites_fill);
             }
+            db.Close();
         });
 
         holder.cvDeal.setOnClickListener(v -> {
