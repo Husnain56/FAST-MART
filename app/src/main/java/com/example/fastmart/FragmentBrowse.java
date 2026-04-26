@@ -34,7 +34,6 @@ public class FragmentBrowse extends Fragment {
 
     SharedPreferences sharedPreferences;
 
-    ArrayList<Product> allProducts = ProductList.getProducts();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,7 +62,6 @@ public class FragmentBrowse extends Fragment {
                 String query = etSearch.getText().toString().trim();
                 if (!query.isEmpty()) {
                     saveSearchTerm(query);
-                    searchProduct(query);
                 }
                 return true;
             }
@@ -80,23 +78,6 @@ public class FragmentBrowse extends Fragment {
         ivBack.setOnClickListener(v -> hideKeyboard());
     }
 
-    private void searchProduct(String query) {
-        boolean found = false;
-        for (Product product : allProducts) {
-            if (product.getName().toLowerCase().contains(query.toLowerCase())) {
-                found = true;
-                break;
-            }
-        }
-
-        new AlertDialog.Builder(requireContext())
-                .setTitle(found ? "Product Found" : "Not Found")
-                .setMessage(found
-                        ? "Product Found."
-                        : "No product matched \"" + query + "\".")
-                .setPositiveButton("OK", null)
-                .show();
-    }
 
     private void saveSearchTerm(String term) {
         if (!list.contains(term)) {
