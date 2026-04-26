@@ -13,11 +13,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fastmart.CartDB;
+
 import java.util.ArrayList;
 
 public class FavouriteProductAdapter extends RecyclerView.Adapter<FavouriteProductAdapter.FavViewHolder> {
 
-    private final Context context;
+    private Context context;
     private final FavouriteDB favouriteDB;
     private ArrayList<ProductItem> list;
 
@@ -49,6 +51,7 @@ public class FavouriteProductAdapter extends RecyclerView.Adapter<FavouriteProdu
     @Override
     public void onBindViewHolder(@NonNull FavViewHolder holder, int position) {
         ProductItem product = list.get(position);
+        CartDB db = new CartDB(context);
 
         holder.tvName.setText(product.getName());
         holder.tvDescription.setText(product.getDescription());
@@ -76,7 +79,10 @@ public class FavouriteProductAdapter extends RecyclerView.Adapter<FavouriteProdu
         });
 
         holder.ibAddToCart.setOnClickListener(v -> {
-            Toast.makeText(context, product.getName() + " added to cart!", Toast.LENGTH_SHORT).show();
+            db.Open();
+            db.addToCart(product);
+            Toast.makeText(context,"Added to cart", Toast.LENGTH_SHORT).show();
+            db.Close();
         });
     }
 

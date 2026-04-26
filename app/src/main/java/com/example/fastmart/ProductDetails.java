@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.example.fastmart.CartDB;
 
 public class ProductDetails extends AppCompatActivity {
 
@@ -23,6 +24,7 @@ public class ProductDetails extends AppCompatActivity {
     TextView item_price, item_name, item_desc, item_details;
     Button btn_buy;
     String currentUserUid;
+    CartDB db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +72,10 @@ public class ProductDetails extends AppCompatActivity {
                     } else {
                         item_image.setVisibility(View.GONE);
                         btn_buy.setOnClickListener(v -> {
+                            db.Open();
+                            db.addToCart(product);
                             Toast.makeText(this, product.getName() + " added to cart!", Toast.LENGTH_SHORT).show();
+                            db.Close();
                         });
                     }
                 })
@@ -89,5 +94,6 @@ public class ProductDetails extends AppCompatActivity {
         item_details = findViewById(R.id.lbl_details);
         btn_buy      = findViewById(R.id.btn_buy);
         btn_back     = findViewById(R.id.btnback);
+        db       = new CartDB(this);
     }
 }

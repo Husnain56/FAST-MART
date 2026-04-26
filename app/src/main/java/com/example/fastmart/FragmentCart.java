@@ -2,6 +2,7 @@ package com.example.fastmart;
 
 import android.content.Context;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -9,12 +10,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.Telephony;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import com.example.fastmart.CartDB;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -22,31 +23,35 @@ import java.util.ArrayList;
 public class FragmentCart extends Fragment implements CartAdapter.OnCartUpdateListener {
 
     public interface SmsHandler {
-        void checkSmsPermission(ArrayList<Product> cartList);
+        void checkSmsPermission(ArrayList<ProductItem> cartList);
     }
+
     SmsHandler smsHandler;
     private RecyclerView recyclerView;
     private CartAdapter adapter;
     private TextView tvTotal;
-    private ArrayList<Product> cartList;
+    private ArrayList<ProductItem> cartList;
+    private CartDB db;
     Button btnCheckout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         return inflater.inflate(R.layout.fragment_cart, container, false);
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         recyclerView = view.findViewById(R.id.recyclerViewCart);
-        tvTotal = view.findViewById(R.id.tvTotalPrice);
-        btnCheckout = view.findViewById(R.id.btnCheckout);
+        tvTotal      = view.findViewById(R.id.tvTotalPrice);
+        btnCheckout  = view.findViewById(R.id.btnCheckout);
 
-        cartList = CartManager.getInstance().getCartItems();
+        db = new CartDB(requireContext());
+        db.Open();
+        cartList = db.getAllCartItems();
+        db.Close();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
         adapter = new CartAdapter(getContext(), cartList, this);
         recyclerView.setAdapter(adapter);
         onUpdateTotal();
@@ -70,33 +75,27 @@ public class FragmentCart extends Fragment implements CartAdapter.OnCartUpdateLi
                     .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                     .show();
         });
-
-
-
     }
+
     @Override
     public void onResume() {
         super.onResume();
+        db.Open();
         cartList.clear();
-        cartList.addAll(CartManager.getInstance().getCartItems());
+        cartList.addAll(db.getAllCartItems());
+        db.Close();
         adapter.notifyDataSetChanged();
         onUpdateTotal();
     }
+
     @Override
     public void onUpdateTotal() {
-        double total = 0.0;
-
-        for (Product product : cartList) {
-            int qty = CartManager.getInstance().getQuantity(product.getProductId());
-            total += (product.getPrice() * qty);
-        }
-
-        tvTotal.setText("$" + String.format("%.2f", total));
-
-        if (cartList.isEmpty()) {
-            tvTotal.setText("$0.00");
-        }
+        db.Open();
+        double total = db.getTotalPrice();
+        db.Close();
+        tvTotal.setText(String.format("$%.2f", total));
     }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -106,5 +105,4 @@ public class FragmentCart extends Fragment implements CartAdapter.OnCartUpdateLi
             throw new RuntimeException(context + " must implement SmsHandler");
         }
     }
-
 }

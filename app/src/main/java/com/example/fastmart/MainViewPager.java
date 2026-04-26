@@ -27,7 +27,7 @@ public class MainViewPager extends AppCompatActivity implements FragmentCart.Sms
     ViewPagerAdapter adapter;
     TabLayout bottomTabLayout;
     TabLayoutMediator mediator;
-    ArrayList<Product> cart;
+    ArrayList<ProductItem> cart;
     private final int SMS_REQUEST_CODE = 1;
 
     @Override
@@ -40,10 +40,9 @@ public class MainViewPager extends AppCompatActivity implements FragmentCart.Sms
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        FavouritesManager.getInstance().loadFromPrefs(this);
-        CartManager.getInstance().loadFromPrefs(this);
         init();
     }
+
     public void init() {
         mainViewPager = findViewById(R.id.MainViewPager);
         adapter = new ViewPagerAdapter(this);
@@ -81,47 +80,42 @@ public class MainViewPager extends AppCompatActivity implements FragmentCart.Sms
     }
 
     private void checkMessagePermissions() {
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
-                == PackageManager.PERMISSION_GRANTED)
-        {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
+                == PackageManager.PERMISSION_GRANTED) {
             sendMessage();
-        }
-        else
-        {
+        } else {
             ActivityCompat.requestPermissions(
                     this,
                     new String[]{Manifest.permission.SEND_SMS},
                     SMS_REQUEST_CODE);
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == SMS_REQUEST_CODE)
-        {
-            if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            {
+        if (requestCode == SMS_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 sendMessage();
-            }
-            else
-            {
+            } else {
                 Toast.makeText(this, "You have to give permission to send message", Toast.LENGTH_SHORT).show();
             }
         }
-
     }
+
     private void sendMessage() {
         StringBuilder msg = new StringBuilder("Products bought:\n");
-        for (Product p : cart) {
+        for (ProductItem p : cart) {
+            double price = p.isOnSale() ? p.getDiscountedPrice() : p.getOriginalPrice();
             msg.append("- ").append(p.getName())
-                    .append(" ($").append(String.format("%.2f", p.getPrice())).append(")\n");
+                    .append(" ($").append(String.format("%.2f", price)).append(")\n");
         }
         SmsManager smsManager = SmsManager.getDefault();
         smsManager.sendTextMessage("+923263874962", null, msg.toString(), null, null);
     }
 
     @Override
-    public void checkSmsPermission(ArrayList<Product> cartList) {
+    public void checkSmsPermission(ArrayList<ProductItem> cartList) {
         this.cart = cartList;
         checkMessagePermissions();
     }
