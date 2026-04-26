@@ -18,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FastMart">
         <activity
+            android:name=".ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".CreateProduct"
             android:exported="false" />
         <activity

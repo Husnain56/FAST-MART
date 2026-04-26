@@ -33,7 +33,7 @@ public class SellerHomeFragment extends Fragment {
     TextView tvName;
     ProductAdapter adapter;
     DatabaseReference productsRef;
-
+    FloatingActionButton fabChat;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -51,6 +51,7 @@ public class SellerHomeFragment extends Fragment {
         fabAddProduct = view.findViewById(R.id.fabAddProduct);
         rvRecommended = view.findViewById(R.id.rvRecommended);
         tvName        = view.findViewById(R.id.tvName);
+        fabChat       = view.findViewById(R.id.fabChat);
 
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -72,6 +73,13 @@ public class SellerHomeFragment extends Fragment {
     private void setListeners() {
         fabAddProduct.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), CreateProduct.class);
+            startActivity(intent);
+        });
+
+        fabChat.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), ChatActivity.class);
+            intent.putExtra("receiverId", "U5JY41QEVaNtbXnXq614HyaxZqG2");
+            intent.putExtra("receiverName", "Husnain Barkat Ali");
             startActivity(intent);
         });
     }

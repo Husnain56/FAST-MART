@@ -1,5 +1,6 @@
 package com.example.fastmart;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,6 +33,8 @@ public class FragmentHome extends Fragment {
     ProductAdapter productAdapter;
     TextView tvName;
 
+    FloatingActionButton fabChat;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -46,6 +50,8 @@ public class FragmentHome extends Fragment {
     public void init(View view) {
         rvDeals       = view.findViewById(R.id.rvDeals);
         rvRecommended = view.findViewById(R.id.rvRecommended);
+
+        fabChat = view.findViewById(R.id.fabChat);
 
         rvDeals.setHasFixedSize(true);
         rvRecommended.setHasFixedSize(true);
@@ -71,6 +77,14 @@ public class FragmentHome extends Fragment {
                 .addOnSuccessListener(snapshot -> {
                     tvName.setText(snapshot.getValue(String.class));
                 });
+
+        fabChat.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), ChatActivity.class);
+            intent.putExtra("receiverId", "bOuosWyb43ha3m6EubJeYpte4Us2");
+            intent.putExtra("receiverName", "Haris Fayyaz");
+            startActivity(intent);
+        });
+
     }
 
     private void loadProducts() {

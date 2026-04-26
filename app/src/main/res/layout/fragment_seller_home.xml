@@ -41,11 +41,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            android:paddingBottom="80dp"
             android:nestedScrollingEnabled="false"
             android:overScrollMode="never" />
 
     </LinearLayout>
 
+    <!-- Add Product FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddProduct"
         android:layout_width="wrap_content"
@@ -55,6 +57,20 @@
         android:contentDescription="Add Product"
         app:srcCompat="@android:drawable/ic_input_add"
         app:backgroundTint="@color/black"
+        app:tint="@color/white"
+        app:elevation="6dp"/>
+
+    <!-- Chat FAB -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabChat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="90dp"
+        android:layout_marginEnd="24dp"
+        android:contentDescription="Chat"
+        app:srcCompat="@android:drawable/ic_dialog_email"
+        app:backgroundTint="#6C63FF"
         app:tint="@color/white"
         app:elevation="6dp"/>
 
