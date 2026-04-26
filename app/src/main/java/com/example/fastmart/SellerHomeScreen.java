@@ -3,6 +3,7 @@ package com.example.fastmart;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -17,6 +18,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SellerHomeScreen extends AppCompatActivity {
 
@@ -53,6 +56,22 @@ public class SellerHomeScreen extends AppCompatActivity {
 
         loadFragment(new SellerHomeFragment(), "Home");
         setListeners();
+
+        View headerView = navigationView.getHeaderView(0);
+        TextView tvNavName = headerView.findViewById(R.id.tvNavName);
+        TextView tvNavEmail = headerView.findViewById(R.id.tvNavEmail);
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        tvNavEmail.setText(email);
+
+        FirebaseDatabase.getInstance().getReference()
+                .child("users").child(uid).child("name")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    tvNavName.setText(snapshot.getValue(String.class));
+                });
     }
 
     private void init() {

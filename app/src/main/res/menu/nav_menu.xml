@@ -21,14 +21,4 @@
 
     </group>
 
-    <!-- Divider before colour scheme -->
-    <group android:id="@+id/grpBottom">
-
-        <item
-            android:id="@+id/nav_colour_scheme"
-            android:icon="@drawable/ic_colour_scheme"
-            android:title="Colour Scheme"/>
-
-    </group>
-
 </menu>

@@ -38,7 +38,6 @@
                 android:text="Pending"
                 android:textSize="11sp"
                 android:textColor="#FFFFFF"
-                android:background="@drawable/bg_status"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:paddingTop="4dp"

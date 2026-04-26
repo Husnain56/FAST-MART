@@ -3,6 +3,7 @@ package com.example.fastmart;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,8 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -26,13 +29,18 @@ public class FragmentHome extends Fragment {
     RecyclerView rvDeals, rvRecommended;
     DealsAdapter dealsAdapter;
     ProductAdapter productAdapter;
+    TextView tvName;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        return inflater.inflate(R.layout.fragment_home, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         init(view);
-        return view;
     }
 
     public void init(View view) {
@@ -52,7 +60,17 @@ public class FragmentHome extends Fragment {
         rvDeals.setAdapter(dealsAdapter);
         rvRecommended.setAdapter(productAdapter);
 
+        tvName = view.findViewById(R.id.tvName);
+
         loadProducts();
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseDatabase.getInstance().getReference()
+                .child("users").child(uid).child("name")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    tvName.setText(snapshot.getValue(String.class));
+                });
     }
 
     private void loadProducts() {
