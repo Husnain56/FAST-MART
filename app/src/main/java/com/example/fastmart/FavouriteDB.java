@@ -11,9 +11,9 @@ import java.util.ArrayList;
 public class FavouriteDB {
 
     Context context;
-    private static final String DB_NAME          = "FavouriteDB";
-    private static final int    DB_VERSION       = 1;
-    private static final String TABLE_NAME       = "favourites";
+    private static final String DB_NAME              = "FavouriteDB";
+    private static final int    DB_VERSION           = 2;
+    private static final String TABLE_NAME           = "favourites";
     private static final String COL_PRODUCT_ID       = "productId";
     private static final String COL_NAME             = "name";
     private static final String COL_CATEGORY         = "category";
@@ -22,22 +22,23 @@ public class FavouriteDB {
     private static final String COL_DESCRIPTION      = "description";
     private static final String COL_SELLER_UID       = "sellerUid";
     private static final String COL_CREATED_AT       = "createdAt";
+    private static final String COL_IMAGE_URL        = "imageUrl";
 
     private ProductOpenHelper helper;
-
     private SQLiteDatabase sqLiteDatabase_write;
     private SQLiteDatabase sqLiteDatabase_read;
+
     public FavouriteDB(Context context) {
         this.context = context;
     }
 
-    public void Open(){
-        helper = new ProductOpenHelper(context);
+    public void Open() {
+        helper               = new ProductOpenHelper(context);
         sqLiteDatabase_write = helper.getWritableDatabase();
-        sqLiteDatabase_read = helper.getReadableDatabase();
+        sqLiteDatabase_read  = helper.getReadableDatabase();
     }
 
-    public void Close(){
+    public void Close() {
         sqLiteDatabase_read.close();
         sqLiteDatabase_write.close();
         helper.close();
@@ -53,6 +54,7 @@ public class FavouriteDB {
         values.put(COL_DESCRIPTION,      product.getDescription());
         values.put(COL_SELLER_UID,       product.getSellerUid());
         values.put(COL_CREATED_AT,       product.getCreatedAt());
+        values.put(COL_IMAGE_URL,        product.getImageUrl());
         sqLiteDatabase_write.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
@@ -82,7 +84,8 @@ public class FavouriteDB {
                         cursor.getDouble(cursor.getColumnIndexOrThrow(COL_DISCOUNTED_PRICE)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COL_DESCRIPTION)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COL_SELLER_UID)),
-                        cursor.getLong(cursor.getColumnIndexOrThrow(COL_CREATED_AT))
+                        cursor.getLong(cursor.getColumnIndexOrThrow(COL_CREATED_AT)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COL_IMAGE_URL))
                 );
                 list.add(product);
             } while (cursor.moveToNext());
@@ -107,7 +110,8 @@ public class FavouriteDB {
                     COL_DISCOUNTED_PRICE + " REAL, " +
                     COL_DESCRIPTION      + " TEXT, " +
                     COL_SELLER_UID       + " TEXT, " +
-                    COL_CREATED_AT       + " INTEGER)");
+                    COL_CREATED_AT       + " INTEGER, " +
+                    COL_IMAGE_URL        + " TEXT)");
         }
 
         @Override

@@ -2,6 +2,7 @@ package com.example.fastmart;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 
 import java.util.ArrayList;
 
@@ -75,6 +79,20 @@ public class FavouriteProductAdapter extends RecyclerView.Adapter<FavouriteProdu
                     .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
                     .show();
         });
+
+        String imageUrl = product.getImageUrl();
+
+        if (!TextUtils.isEmpty(imageUrl)) {
+            Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.image_place_holder)
+                    .error(R.drawable.image_place_holder)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .centerCrop()
+                    .into(holder.ivImage);
+        } else {
+            holder.ivImage.setImageResource(R.drawable.image_place_holder);
+        }
 
         holder.ibAddToCart.setOnClickListener(v -> {
             db.Open();

@@ -1,6 +1,7 @@
 package com.example.fastmart;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 
 import java.util.ArrayList;
 
@@ -46,6 +50,19 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             holder.tvPrice.setText(String.format("$%.2f", product.getDiscountedPrice()));
         } else {
             holder.tvPrice.setText(String.format("$%.2f", product.getOriginalPrice()));
+        }
+        String imageUrl = product.getImageUrl();
+
+        if (!TextUtils.isEmpty(imageUrl)) {
+            Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.image_place_holder)
+                    .error(R.drawable.image_place_holder)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .centerCrop()
+                    .into(holder.ivProduct);
+        } else {
+            holder.ivProduct.setImageResource(R.drawable.image_place_holder);
         }
 
         db.Open();

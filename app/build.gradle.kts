@@ -48,6 +48,8 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation("com.firebaseui:firebase-ui-database:9.1.1")
     implementation("androidx.paging:paging-runtime:3.4.2")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("com.cloudinary:cloudinary-android:3.1.2")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
