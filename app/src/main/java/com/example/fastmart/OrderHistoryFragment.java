@@ -60,6 +60,7 @@ public class OrderHistoryFragment extends Fragment {
                                 orders.add(order);
                             }
                         }
+                        orders.sort((a, b) -> Long.compare(b.getOrderedAt(), a.getOrderedAt()));
                         adapter.updateOrders(orders);
                     }
 

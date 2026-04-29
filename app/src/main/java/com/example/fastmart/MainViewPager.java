@@ -154,6 +154,8 @@ public class MainViewPager extends AppCompatActivity implements FragmentCart.Sms
                 itemData.put("price",    price);
                 itemData.put("category", item.getCategory());
                 itemData.put("quantity", quantity);
+                itemData.put("imageUrl", item.getImageUrl());
+
                 itemsMap.put(item.getProductId(), itemData);
             }
 

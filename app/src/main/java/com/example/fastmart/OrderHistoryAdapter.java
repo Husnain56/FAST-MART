@@ -1,15 +1,19 @@
 package com.example.fastmart;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,8 +31,8 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         this.orders  = orders;
     }
 
-    public void updateOrders(ArrayList<Order> orders) {
-        this.orders = orders;
+    public void updateOrders(ArrayList<Order> newOrders) {
+        this.orders = newOrders;
         notifyDataSetChanged();
     }
 
@@ -48,7 +52,19 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
         holder.tvOrderDate.setText(sdf.format(new Date(order.getOrderedAt())));
 
-        holder.tvStatus.setText(order.getStatus().toUpperCase());
+        String status = order.getStatus().toUpperCase();
+        holder.tvStatus.setText(status);
+        switch (status) {
+            case "DELIVERED":
+                holder.tvStatus.setTextColor(context.getResources().getColor(android.R.color.holo_green_dark));
+                break;
+            case "CANCELLED":
+                holder.tvStatus.setTextColor(context.getResources().getColor(android.R.color.holo_red_dark));
+                break;
+            default:
+                holder.tvStatus.setTextColor(context.getResources().getColor(android.R.color.holo_orange_dark));
+                break;
+        }
 
         holder.tvTotal.setText(String.format("$%.2f", order.getTotalPrice()));
 
@@ -57,12 +73,28 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
             for (Map.Entry<String, OrderItem> entry : order.getItems().entrySet()) {
                 OrderItem item = entry.getValue();
                 View row = LayoutInflater.from(context).inflate(R.layout.item_order_product, holder.llItems, false);
-                TextView tvName  = row.findViewById(R.id.tvProductName);
-                TextView tvQty   = row.findViewById(R.id.tvProductQty);
-                TextView tvPrice = row.findViewById(R.id.tvProductPrice);
+
+                TextView tvName   = row.findViewById(R.id.tvProductName);
+                TextView tvQty    = row.findViewById(R.id.tvProductQty);
+                TextView tvPrice  = row.findViewById(R.id.tvProductPrice);
+                ImageView ivImage = row.findViewById(R.id.ivProductImage);
+
                 tvName.setText(item.getName());
                 tvQty.setText("Qty: " + item.getQuantity());
                 tvPrice.setText(String.format("$%.2f", item.getPrice()));
+
+                if (!TextUtils.isEmpty(item.getImageUrl())) {
+                    Glide.with(context)
+                            .load(item.getImageUrl())
+                            .placeholder(R.drawable.image_place_holder)
+                            .error(R.drawable.image_place_holder)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .centerCrop()
+                            .into(ivImage);
+                } else {
+                    ivImage.setImageResource(R.drawable.image_place_holder);
+                }
+
                 holder.llItems.addView(row);
             }
         }
